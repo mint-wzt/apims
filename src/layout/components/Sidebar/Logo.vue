@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      title: 'ELADMIN-后台管理',
+      title: '农产品基础数据库系统',
       logo: Logo
     }
   }
