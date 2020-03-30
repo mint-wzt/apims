@@ -80,20 +80,42 @@ CREATE TABLE `dept`  (
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
   `pid` bigint(20) NOT NULL COMMENT '上级部门',
   `enabled` bit(1) NOT NULL COMMENT '状态',
+--   -- 添加行政区域ID
+--   `region_id` bigint(20) not null comment '所属行政区域ID',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   PRIMARY KEY (`id`) USING BTREE
+--   INDEX `FK5tpkpudf6d9nboiijdbgpnmddc`(`region_id`) USING BTREE,
+--   CONSTRAINT `FK5tpkpudf6d9nboiijdbgpnmddc` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部门' ROW_FORMAT = Compact;
+
 
 -- ----------------------------
 -- Records of dept
 -- ----------------------------
-INSERT INTO `dept` VALUES (1, 'EL-ADMIN', 0, b'1', '2019-03-01 12:07:37');
-INSERT INTO `dept` VALUES (2, '研发部', 7, b'1', '2019-03-25 09:15:32');
-INSERT INTO `dept` VALUES (5, '运维部', 7, b'1', '2019-03-25 09:20:44');
-INSERT INTO `dept` VALUES (6, '测试部', 8, b'1', '2019-03-25 09:52:18');
-INSERT INTO `dept` VALUES (7, '华南分部', 1, b'1', '2019-03-25 11:04:50');
-INSERT INTO `dept` VALUES (8, '华北分部', 1, b'1', '2019-03-25 11:04:53');
-INSERT INTO `dept` VALUES (11, '人事部', 8, b'1', '2019-03-25 11:07:58');
+INSERT INTO `dept` VALUES (1, '江永县农业局', 0, b'1', '2020-03-01 12:07:37');
+INSERT INTO `dept` VALUES (2, '采购部', 1, b'1', '2020-03-25 11:04:50');
+INSERT INTO `dept` VALUES (3, '生产部', 1, b'1', '2020-03-25 11:04:53');
+INSERT INTO `dept` VALUES (4, '道县农业局', 0, b'1', '2020-03-01 12:07:37');
+INSERT INTO `dept` VALUES (5, '采购部', 4, b'1', '2020-03-25 11:04:50');
+INSERT INTO `dept` VALUES (6, '生产部', 4, b'1', '2020-03-25 11:04:53');
+
+
+-- ----------------------------
+-- 添加行政区域表 region
+-- ----------------------------
+-- drop table if exists `region`;
+-- create table `region`
+-- (
+--   `id`              varchar (255) not null primary key comment '行政区域ID',
+--   `pid`             varchar(255) null default null comment '父级ID',
+--   `level`           bigint(20) null default null comment '等级',
+--   `name`            varchar(255) null default null comment '简称',
+--   `pinyin`          varchar(255) null default null comment '拼音',
+--   `ext_id`          varchar (255) not null primary key comment '拓展ID',
+--   `ext_name`        varchar (255) not null primary key comment '拓展名'
+-- ) engine = InnoDB
+--   default CHARSET = utf8
+--   ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for dict
@@ -208,10 +230,10 @@ CREATE TABLE `job`  (
 -- ----------------------------
 -- Records of job
 -- ----------------------------
-INSERT INTO `job` VALUES (8, '人事专员', b'1', 3, 11, '2019-03-29 14:52:28');
-INSERT INTO `job` VALUES (10, '产品经理', b'1', 4, 2, '2019-03-29 14:55:51');
-INSERT INTO `job` VALUES (11, '全栈开发', b'1', 2, 2, '2019-03-31 13:39:30');
-INSERT INTO `job` VALUES (12, '软件测试', b'1', 5, 2, '2019-03-31 13:39:43');
+INSERT INTO `job` VALUES (8, '采购员', b'1', 3, 2, '2019-03-29 14:52:28');
+INSERT INTO `job` VALUES (10, '数据分析员', b'1', 4, 3, '2019-03-29 14:55:51');
+INSERT INTO `job` VALUES (11, '测试员', b'1', 2, 5, '2019-03-31 13:39:30');
+INSERT INTO `job` VALUES (12, '操作员', b'1', 5, 6, '2019-03-31 13:39:43');
 
 -- ----------------------------
 -- Table structure for local_storage
@@ -276,71 +298,79 @@ CREATE TABLE `menu`  (
 -- ----------------------------
 -- Records of menu
 -- ----------------------------
-INSERT INTO `menu` VALUES (1, b'0', '系统管理', NULL, 0, 1, 'system', 'system', b'0', b'0', NULL, '2018-12-18 15:11:29', NULL, 0);
-INSERT INTO `menu` VALUES (2, b'0', '用户管理', 'system/user/index', 1, 2, 'peoples', 'user', b'0', b'0', 'User', '2018-12-18 15:14:44', 'user:list', 1);
-INSERT INTO `menu` VALUES (3, b'0', '角色管理', 'system/role/index', 1, 3, 'role', 'role', b'0', b'0', 'Role', '2018-12-18 15:16:07', 'roles:list', 1);
-INSERT INTO `menu` VALUES (5, b'0', '菜单管理', 'system/menu/index', 1, 5, 'menu', 'menu', b'0', b'0', 'Menu', '2018-12-18 15:17:28', 'menu:list', 1);
-INSERT INTO `menu` VALUES (6, b'0', '系统监控', NULL, 0, 10, 'monitor', 'monitor', b'0', b'0', NULL, '2018-12-18 15:17:48', NULL, 0);
-INSERT INTO `menu` VALUES (7, b'0', '操作日志', 'monitor/log/index', 6, 11, 'log', 'logs', b'0', b'0', 'Log', '2018-12-18 15:18:26', NULL, 1);
--- INSERT INTO `menu` VALUES (9, b'0', 'SQL监控', 'monitor/sql/index', 6, 18, 'sqlMonitor', 'druid', b'0', b'0', 'Sql', '2018-12-18 15:19:34', NULL, 1);
-INSERT INTO `menu` VALUES (10, b'0', '组件管理', NULL, 0, 50, 'zujian', 'components', b'0', b'0', NULL, '2018-12-19 13:38:16', NULL, 0);
-INSERT INTO `menu` VALUES (11, b'0', '图标库', 'components/icons/index', 10, 51, 'icon', 'icon', b'0', b'0', 'Icons', '2018-12-19 13:38:49', NULL, 1);
-INSERT INTO `menu` VALUES (14, b'0', '邮件工具', 'tools/email/index', 36, 35, 'email', 'email', b'0', b'0', 'Email', '2018-12-27 10:13:09', NULL, 1);
--- INSERT INTO `menu` VALUES (15, b'0', '富文本', 'components/Editor', 10, 52, 'fwb', 'tinymce', b'0', b'0', 'Editor', '2018-12-27 11:58:25', NULL, 1);
--- INSERT INTO `menu` VALUES (16, b'0', '图床管理', 'tools/picture/index', 36, 33, 'image', 'pictures', b'0', b'0', 'Pictures', '2018-12-28 09:36:53', 'pictures:list', 1);
--- INSERT INTO `menu` VALUES (18, b'0', '存储管理', 'tools/storage/index', 36, 34, 'qiniu', 'storage', b'0', b'0', 'Storage', '2018-12-31 11:12:15', 'storage:list', 1);
--- INSERT INTO `menu` VALUES (19, b'0', '支付宝工具', 'tools/aliPay/index', 36, 37, 'alipay', 'aliPay', b'0', b'0', 'AliPay', '2018-12-31 14:52:38', NULL, 1);
-INSERT INTO `menu` VALUES (21, b'0', '多级菜单', '', 0, 900, 'menu', 'nested', b'0', b'1', NULL, '2019-01-04 16:22:03', NULL, 0);
-INSERT INTO `menu` VALUES (22, b'0', '二级菜单1', 'nested/menu1/index', 21, 999, 'menu', 'menu1', b'0', b'0', NULL, '2019-01-04 16:23:29', NULL, 1);
-INSERT INTO `menu` VALUES (23, b'0', '二级菜单2', 'nested/menu2/index', 21, 999, 'menu', 'menu2', b'0', b'0', NULL, '2019-01-04 16:23:57', NULL, 1);
-INSERT INTO `menu` VALUES (24, b'0', '三级菜单1', 'nested/menu1/menu1-1', 22, 999, 'menu', 'menu1-1', b'0', b'0', NULL, '2019-01-04 16:24:48', NULL, 1);
-INSERT INTO `menu` VALUES (27, b'0', '三级菜单2', 'nested/menu1/menu1-2', 22, 999, 'menu', 'menu1-2', b'0', b'0', NULL, '2019-01-07 17:27:32', NULL, 1);
--- INSERT INTO `menu` VALUES (28, b'0', '定时任务', 'system/timing/index', 36, 31, 'timing', 'timing', b'0', b'0', 'Timing', '2019-01-07 20:34:40', 'timing:list', 1);
--- INSERT INTO `menu` VALUES (30, b'0', '代码生成', 'generator/index', 36, 32, 'dev', 'generator', b'1', b'0', 'GeneratorIndex', '2019-01-11 15:45:55', NULL, 1);
-INSERT INTO `menu` VALUES (32, b'0', '异常日志', 'monitor/log/errorLog', 6, 12, 'error', 'errorLog', b'0', b'0', 'ErrorLog', '2019-01-13 13:49:03', NULL, 1);
--- INSERT INTO `menu` VALUES (33, b'0', 'Markdown', 'components/MarkDown', 10, 53, 'markdown', 'markdown', b'0', b'0', 'Markdown', '2019-03-08 13:46:44', NULL, 1);
--- INSERT INTO `menu` VALUES (34, b'0', 'Yaml编辑器', 'components/YamlEdit', 10, 54, 'dev', 'yaml', b'0', b'0', 'YamlEdit', '2019-03-08 15:49:40', NULL, 1);
-INSERT INTO `menu` VALUES (35, b'0', '单位管理', 'system/dept/index', 1, 6, 'dept', 'dept', b'0', b'0', 'Dept', '2019-03-25 09:46:00', 'dept:list', 1);
-INSERT INTO `menu` VALUES (36, b'0', '系统工具', '', 0, 30, 'sys-tools', 'sys-tools', b'0', b'0', NULL, '2019-03-29 10:57:35', NULL, 0);
-INSERT INTO `menu` VALUES (37, b'0', '岗位管理', 'system/job/index', 1, 7, 'Steve-Jobs', 'job', b'0', b'0', 'Job', '2019-03-29 13:51:18', 'job:list', 1);
--- INSERT INTO `menu` VALUES (38, b'0', '接口文档', 'tools/swagger/index', 36, 36, 'swagger', 'swagger2', b'0', b'0', 'Swagger', '2019-03-29 19:57:53', NULL, 1);
--- INSERT INTO `menu` VALUES (39, b'0', '字典管理', 'system/dict/index', 1, 8, 'dictionary', 'dict', b'0', b'0', 'Dict', '2019-04-10 11:49:04', 'dict:list', 1);
--- INSERT INTO `menu` VALUES (41, b'0', '在线用户', 'monitor/online/index', 6, 10, 'Steve-Jobs', 'online', b'0', b'0', 'OnlineUser', '2019-10-26 22:08:43', NULL, 1);
-INSERT INTO `menu` VALUES (44, b'0', '用户新增', '', 2, 2, '', '', b'0', b'0', '', '2019-10-29 10:59:46', 'user:add', 2);
-INSERT INTO `menu` VALUES (45, b'0', '用户编辑', '', 2, 3, '', '', b'0', b'0', '', '2019-10-29 11:00:08', 'user:edit', 2);
-INSERT INTO `menu` VALUES (46, b'0', '用户删除', '', 2, 4, '', '', b'0', b'0', '', '2019-10-29 11:00:23', 'user:del', 2);
-INSERT INTO `menu` VALUES (48, b'0', '角色创建', '', 3, 2, '', '', b'0', b'0', '', '2019-10-29 12:45:34', 'roles:add', 2);
-INSERT INTO `menu` VALUES (49, b'0', '角色修改', '', 3, 3, '', '', b'0', b'0', '', '2019-10-29 12:46:16', 'roles:edit', 2);
-INSERT INTO `menu` VALUES (50, b'0', '角色删除', '', 3, 4, '', '', b'0', b'0', '', '2019-10-29 12:46:51', 'roles:del', 2);
-INSERT INTO `menu` VALUES (52, b'0', '菜单新增', '', 5, 2, '', '', b'0', b'0', '', '2019-10-29 12:55:07', 'menu:add', 2);
-INSERT INTO `menu` VALUES (53, b'0', '菜单编辑', '', 5, 3, '', '', b'0', b'0', '', '2019-10-29 12:55:40', 'menu:edit', 2);
-INSERT INTO `menu` VALUES (54, b'0', '菜单删除', '', 5, 4, '', '', b'0', b'0', '', '2019-10-29 12:56:00', 'menu:del', 2);
+INSERT INTO `menu` VALUES (1, b'0', '基础信息维护', NULL, 0, 1, 'maintenance', 'product', b'0', b'0', NULL, '2018-12-18 15:11:29', NULL, 0);
+INSERT INTO `menu` VALUES (2, b'0', '农产品分类管理', 'product/category/index', 1, 2, 'list', 'category', b'0', b'0', NULL, '2018-12-18 15:14:44', 'category:list', 1);
+INSERT INTO `menu` VALUES (3, b'0', '基本信息描述管理', 'product/description/index', 1, 3, 'description', 'description', b'0', b'0', NULL, '2018-12-18 15:14:44', 'description:list', 1);
+
+
+INSERT INTO `menu` VALUES (6, b'0', '农产品信息采集', NULL, 0, 2, 'chart', 'collection', b'0', b'0', NULL, '2018-12-18 15:11:29', NULL, 0);
+INSERT INTO `menu` VALUES (7, b'0', '农产品信息管理', 'collection/products/index', 6, 7, 'skill', 'products', b'0', b'0', NULL, '2018-12-18 15:11:29', 'products:list', 1);
+INSERT INTO `menu` VALUES (8, b'0', '产品生产信息管理', 'collection/info/index', 6, 8, 'redis', 'info', b'0', b'0', NULL, '2018-12-18 15:11:29', 'products-info:list', 1);
+INSERT INTO `menu` VALUES (9, b'0', '产品检测数据管理', 'collection/detect/index', 6, 9, 'qiniu', 'detect', b'0', b'0', NULL, '2018-12-18 15:11:29', 'products-detect:list', 1);
+INSERT INTO `menu` VALUES (10, b'0', '产品销售数据管理', 'collection/sale/index', 6, 10, 'redis', 'sale', b'0', b'0', NULL, '2018-12-18 15:11:29', 'products-sale:list', 1);
+INSERT INTO `menu` VALUES (11, b'0', '农产品数据抓取','collection/grab/index', 6, 11, 'develop', 'grab', b'0', b'0', NULL, '2018-12-18 15:11:29','products-grab:list', 1);
+
+
+INSERT INTO `menu` VALUES (15, b'0', '信息显示与分析', NULL, 0, 3, 'codeConsole', 'analysis', b'0', b'0', NULL, '2018-12-18 15:11:29', NULL, 0);
+INSERT INTO `menu` VALUES (16, b'0', '农产品信息查询', 'analysis/search/index', 15, 16, 'search', 'search', b'0', b'0', NULL, '2018-12-18 15:11:29', 'search:list', 1);
+INSERT INTO `menu` VALUES (17, b'0', '价格行情分析', 'analysis/price/index', 15, 17, 'sqlMonitor', 'price', b'0', b'0', NULL, '2018-12-18 15:11:29', 'price:list', 1);
+
+
+
+INSERT INTO `menu` VALUES (20, b'0', '系统管理', NULL, 0, 4, 'system', 'system', b'0', b'0', NULL, '2018-12-18 15:11:29', NULL, 0);
+INSERT INTO `menu` VALUES (21, b'0', '用户管理', 'system/user/index', 20, 21, 'peoples', 'user', b'0', b'0', 'User', '2018-12-18 15:14:44', 'user:list', 1);
+INSERT INTO `menu` VALUES (23, b'0', '角色管理', 'system/role/index', 20, 23, 'role', 'role', b'0', b'0', 'Role', '2018-12-18 15:16:07', 'roles:list', 1);
+INSERT INTO `menu` VALUES (25, b'0', '菜单管理', 'system/menu/index', 20, 25, 'menu', 'menu', b'0', b'0', 'Menu', '2018-12-18 15:17:28', 'menu:list', 1);
+INSERT INTO `menu` VALUES (35, b'0', '单位管理', 'system/dept/index', 20, 35, 'dept', 'dept', b'0', b'0', 'Dept', '2019-03-25 09:46:00', 'dept:list', 1);
+INSERT INTO `menu` VALUES (37, b'0', '岗位管理', 'system/job/index', 20, 37, 'Steve-Jobs', 'job', b'0', b'0', 'Job', '2019-03-29 13:51:18', 'job:list', 1);
+
+-- INSERT INTO `menu` VALUES (39, b'0', '组织机构管理', 'system/organization/index', 20, 39, 'organization', 'organization', b'0', b'0', Null , '2019-03-25 09:46:00', 'organization:list', 1);
+
+
+-- 用户管理权限
+INSERT INTO `menu` VALUES (44, b'0', '用户新增', '', 21, 2, '', '', b'0', b'0', '', '2019-10-29 10:59:46', 'user:add', 2);
+INSERT INTO `menu` VALUES (45, b'0', '用户编辑', '', 21, 3, '', '', b'0', b'0', '', '2019-10-29 11:00:08', 'user:edit', 2);
+INSERT INTO `menu` VALUES (46, b'0', '用户删除', '', 21, 4, '', '', b'0', b'0', '', '2019-10-29 11:00:23', 'user:del', 2);
+
+-- 角色管理权限
+INSERT INTO `menu` VALUES (48, b'0', '角色创建', '', 23, 2, '', '', b'0', b'0', '', '2019-10-29 12:45:34', 'roles:add', 2);
+INSERT INTO `menu` VALUES (49, b'0', '角色修改', '', 23, 3, '', '', b'0', b'0', '', '2019-10-29 12:46:16', 'roles:edit', 2);
+INSERT INTO `menu` VALUES (50, b'0', '角色删除', '', 23, 4, '', '', b'0', b'0', '', '2019-10-29 12:46:51', 'roles:del', 2);
+
+-- 菜单管理
+INSERT INTO `menu` VALUES (52, b'0', '菜单新增', '', 25, 2, '', '', b'0', b'0', '', '2019-10-29 12:55:07', 'menu:add', 2);
+INSERT INTO `menu` VALUES (53, b'0', '菜单编辑', '', 25, 3, '', '', b'0', b'0', '', '2019-10-29 12:55:40', 'menu:edit', 2);
+INSERT INTO `menu` VALUES (54, b'0', '菜单删除', '', 25, 4, '', '', b'0', b'0', '', '2019-10-29 12:56:00', 'menu:del', 2);
+
+-- 单位管理
 INSERT INTO `menu` VALUES (56, b'0', '部门新增', '', 35, 2, '', '', b'0', b'0', '', '2019-10-29 12:57:09', 'dept:add', 2);
 INSERT INTO `menu` VALUES (57, b'0', '部门编辑', '', 35, 3, '', '', b'0', b'0', '', '2019-10-29 12:57:27', 'dept:edit', 2);
 INSERT INTO `menu` VALUES (58, b'0', '部门删除', '', 35, 4, '', '', b'0', b'0', '', '2019-10-29 12:57:41', 'dept:del', 2);
+
+-- 岗位管理
 INSERT INTO `menu` VALUES (60, b'0', '岗位新增', '', 37, 2, '', '', b'0', b'0', '', '2019-10-29 12:58:27', 'job:add', 2);
 INSERT INTO `menu` VALUES (61, b'0', '岗位编辑', '', 37, 3, '', '', b'0', b'0', '', '2019-10-29 12:58:45', 'job:edit', 2);
 INSERT INTO `menu` VALUES (62, b'0', '岗位删除', '', 37, 4, '', '', b'0', b'0', '', '2019-10-29 12:59:04', 'job:del', 2);
--- INSERT INTO `menu` VALUES (64, b'0', '字典新增', '', 39, 2, '', '', b'0', b'0', '', '2019-10-29 13:00:17', 'dict:add', 2);
--- INSERT INTO `menu` VALUES (65, b'0', '字典编辑', '', 39, 3, '', '', b'0', b'0', '', '2019-10-29 13:00:42', 'dict:edit', 2);
--- INSERT INTO `menu` VALUES (66, b'0', '字典删除', '', 39, 4, '', '', b'0', b'0', '', '2019-10-29 13:00:59', 'dict:del', 2);
--- INSERT INTO `menu` VALUES (70, b'0', '图片上传', '', 16, 2, '', '', b'0', b'0', '', '2019-10-29 13:05:34', 'pictures:add', 2);
--- INSERT INTO `menu` VALUES (71, b'0', '图片删除', '', 16, 3, '', '', b'0', b'0', '', '2019-10-29 13:05:52', 'pictures:del', 2);
--- INSERT INTO `menu` VALUES (73, b'0', '任务新增', '', 28, 2, '', '', b'0', b'0', '', '2019-10-29 13:07:28', 'timing:add', 2);
--- INSERT INTO `menu` VALUES (74, b'0', '任务编辑', '', 28, 3, '', '', b'0', b'0', '', '2019-10-29 13:07:41', 'timing:edit', 2);
--- INSERT INTO `menu` VALUES (75, b'0', '任务删除', '', 28, 4, '', '', b'0', b'0', '', '2019-10-29 13:07:54', 'timing:del', 2);
--- INSERT INTO `menu` VALUES (77, b'0', '上传文件', '', 18, 2, '', '', b'0', b'0', '', '2019-10-29 13:09:09', 'storage:add', 2);
--- INSERT INTO `menu` VALUES (78, b'0', '文件编辑', '', 18, 3, '', '', b'0', b'0', '', '2019-10-29 13:09:22', 'storage:edit', 2);
--- INSERT INTO `menu` VALUES (79, b'0', '文件删除', '', 18, 4, '', '', b'0', b'0', '', '2019-10-29 13:09:34', 'storage:del', 2);
-INSERT INTO `menu` VALUES (80, b'0', '服务监控', 'monitor/server/index', 6, 14, 'codeConsole', 'server', b'0', b'0', 'ServerMonitor', '2019-11-07 13:06:39', 'server:list', 1);
--- INSERT INTO `menu` VALUES (82, b'0', '生成配置', 'generator/config', 36, 33, 'dev', 'generator/config/:tableName', b'1', b'1', 'GeneratorConfig', '2019-11-17 20:08:56', '', 1);
--- INSERT INTO `menu` VALUES (83, b'0', '图表库', 'components/Echarts', 10, 50, 'chart', 'echarts', b'1', b'0', 'Echarts', '2019-11-21 09:04:32', '', 1);
+
+-- 系统监控
+INSERT INTO `menu` VALUES (30, b'0', '系统监控', NULL, 0, 10, 'monitor', 'monitor', b'0', b'0', NULL, '2018-12-18 15:17:48', NULL, 0);
+INSERT INTO `menu` VALUES (31, b'0', '操作日志', 'monitor/log/index', 30, 31, 'log', 'logs', b'0', b'0', 'Log', '2018-12-18 15:18:26', NULL, 1);
+INSERT INTO `menu` VALUES (32, b'0', '异常日志', 'monitor/log/errorLog', 30, 32, 'error', 'errorLog', b'0', b'0', 'ErrorLog', '2019-01-13 13:49:03', NULL, 1);
+INSERT INTO `menu` VALUES (80, b'0', '服务监控', 'monitor/server/index', 30, 80, 'codeConsole', 'server', b'0', b'0', 'ServerMonitor', '2019-11-07 13:06:39', 'server:list', 1);
+
+-- 系统工具
+INSERT INTO `menu` VALUES (36, b'0', '系统工具', '', 0, 30, 'sys-tools', 'sys-tools', b'0', b'0', NULL, '2019-03-29 10:57:35', NULL, 0);
+INSERT INTO `menu` VALUES (14, b'0', '邮件工具', 'tools/email/index', 36, 35, 'email', 'email', b'0', b'0', 'Email', '2018-12-27 10:13:09', NULL, 1);
+
+
+-- 运维服务
 INSERT INTO `menu` VALUES (90, b'0', '运维管理', '', 0, 20, 'mnt', 'mnt', b'0', b'0', 'Mnt', '2019-11-09 10:31:08', NULL, 1);
 INSERT INTO `menu` VALUES (92, b'0', '服务器', 'mnt/server/index', 90, 22, 'server', 'mnt/serverDeploy', b'0', b'0', 'ServerDeploy', '2019-11-10 10:29:25', 'serverDeploy:list', 1);
 INSERT INTO `menu` VALUES (93, b'0', '应用管理', 'mnt/app/index', 90, 23, 'app', 'mnt/app', b'0', b'0', 'App', '2019-11-10 11:05:16', 'app:list', 1);
 INSERT INTO `menu` VALUES (94, b'0', '部署管理', 'mnt/deploy/index', 90, 24, 'deploy', 'mnt/deploy', b'0', b'0', 'Deploy', '2019-11-10 15:56:55', 'deploy:list', 1);
 INSERT INTO `menu` VALUES (97, b'0', '部署备份', 'mnt/deployHistory/index', 90, 25, 'backup', 'mnt/deployHistory', b'0', b'0', 'DeployHistory', '2019-11-10 16:49:44', 'deployHistory:list', 1);
 INSERT INTO `menu` VALUES (98, b'0', '数据库管理', 'mnt/database/index', 90, 26, 'database', 'mnt/database', b'0', b'0', 'Database', '2019-11-10 20:40:04', 'database:list', 1);
+
 INSERT INTO `menu` VALUES (102, b'0', '删除', '', 97, 999, '', '', b'0', b'0', '', '2019-11-17 09:32:48', 'deployHistory:del', 2);
 INSERT INTO `menu` VALUES (103, b'0', '服务器新增', '', 92, 999, '', '', b'0', b'0', '', '2019-11-17 11:08:33', 'serverDeploy:add', 2);
 INSERT INTO `menu` VALUES (104, b'0', '服务器编辑', '', 92, 999, '', '', b'0', b'0', '', '2019-11-17 11:08:57', 'serverDeploy:edit', 2);
@@ -354,7 +384,6 @@ INSERT INTO `menu` VALUES (111, b'0', '部署删除', '', 94, 999, '', '', b'0',
 INSERT INTO `menu` VALUES (112, b'0', '数据库新增', '', 98, 999, '', '', b'0', b'0', '', '2019-11-17 11:12:43', 'database:add', 2);
 INSERT INTO `menu` VALUES (113, b'0', '数据库编辑', '', 98, 999, '', '', b'0', b'0', '', '2019-11-17 11:12:58', 'database:edit', 2);
 INSERT INTO `menu` VALUES (114, b'0', '数据库删除', '', 98, 999, '', '', b'0', b'0', '', '2019-11-17 11:13:14', 'database:del', 2);
-INSERT INTO `menu` VALUES (116, b'0', '生成预览', 'generator/preview', 36, 999, 'java', 'generator/preview/:tableName', b'1', b'1', 'Preview', '2019-11-26 14:54:36', NULL, 1);
 
 -- ----------------------------
 -- Table structure for mnt_app
@@ -613,8 +642,11 @@ CREATE TABLE `role`  (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES (1, '超级管理员', '-', '全部', 1, '2018-11-23 11:04:37', 'admin');
-INSERT INTO `role` VALUES (2, '普通用户', '-', '本级', 2, '2018-11-23 13:09:06', 'common');
+INSERT INTO `role` VALUES (1, '系统管理员', '-', '全部', 1, '2018-11-23 11:04:37', 'admin');
+INSERT INTO `role` VALUES (2, '行政管理员', '-', '本级', 2, '2018-11-23 11:04:37', 'district-admin');
+INSERT INTO `role` VALUES (3, '行政区用户', '-', '本级', 4, '2018-11-23 11:04:37', 'district-common');
+INSERT INTO `role` VALUES (4, '组织机构管理员', '-', '本级', 3, '2018-11-23 11:04:37', 'dept-admin');
+INSERT INTO `role` VALUES (5, '组织机构用户', '-', '本级', 5, '2018-11-23 13:09:06', 'dept-common');
 
 -- ----------------------------
 -- Table structure for roles_depts
@@ -648,33 +680,31 @@ CREATE TABLE `roles_menus`  (
 INSERT INTO `roles_menus` VALUES (1, 1);
 INSERT INTO `roles_menus` VALUES (2, 1);
 INSERT INTO `roles_menus` VALUES (3, 1);
-INSERT INTO `roles_menus` VALUES (5, 1);
 INSERT INTO `roles_menus` VALUES (6, 1);
 INSERT INTO `roles_menus` VALUES (7, 1);
--- INSERT INTO `roles_menus` VALUES (9, 1);
+INSERT INTO `roles_menus` VALUES (8, 1);
+INSERT INTO `roles_menus` VALUES (9, 1);
 INSERT INTO `roles_menus` VALUES (10, 1);
 INSERT INTO `roles_menus` VALUES (11, 1);
 INSERT INTO `roles_menus` VALUES (14, 1);
--- INSERT INTO `roles_menus` VALUES (15, 1);
--- INSERT INTO `roles_menus` VALUES (16, 1);
--- INSERT INTO `roles_menus` VALUES (18, 1);
--- INSERT INTO `roles_menus` VALUES (19, 1);
+INSERT INTO `roles_menus` VALUES (15, 1);
+INSERT INTO `roles_menus` VALUES (16, 1);
+INSERT INTO `roles_menus` VALUES (17, 1);
+INSERT INTO `roles_menus` VALUES (20, 1);
 INSERT INTO `roles_menus` VALUES (21, 1);
-INSERT INTO `roles_menus` VALUES (22, 1);
+
 INSERT INTO `roles_menus` VALUES (23, 1);
-INSERT INTO `roles_menus` VALUES (24, 1);
-INSERT INTO `roles_menus` VALUES (27, 1);
--- INSERT INTO `roles_menus` VALUES (28, 1);
--- INSERT INTO `roles_menus` VALUES (30, 1);
+INSERT INTO `roles_menus` VALUES (25, 1);
+INSERT INTO `roles_menus` VALUES (30, 1);
+INSERT INTO `roles_menus` VALUES (31, 1);
 INSERT INTO `roles_menus` VALUES (32, 1);
--- INSERT INTO `roles_menus` VALUES (33, 1);
--- INSERT INTO `roles_menus` VALUES (34, 1);
 INSERT INTO `roles_menus` VALUES (35, 1);
 INSERT INTO `roles_menus` VALUES (36, 1);
 INSERT INTO `roles_menus` VALUES (37, 1);
--- INSERT INTO `roles_menus` VALUES (38, 1);
--- INSERT INTO `roles_menus` VALUES (39, 1);
--- INSERT INTO `roles_menus` VALUES (41, 1);
+
+
+
+-- INSERT INTO `roles_menus` VALUES (37, 1);
 INSERT INTO `roles_menus` VALUES (44, 1);
 INSERT INTO `roles_menus` VALUES (45, 1);
 INSERT INTO `roles_menus` VALUES (46, 1);
@@ -690,60 +720,41 @@ INSERT INTO `roles_menus` VALUES (58, 1);
 INSERT INTO `roles_menus` VALUES (60, 1);
 INSERT INTO `roles_menus` VALUES (61, 1);
 INSERT INTO `roles_menus` VALUES (62, 1);
--- INSERT INTO `roles_menus` VALUES (64, 1);
--- INSERT INTO `roles_menus` VALUES (65, 1);
--- INSERT INTO `roles_menus` VALUES (66, 1);
--- INSERT INTO `roles_menus` VALUES (73, 1);
--- INSERT INTO `roles_menus` VALUES (74, 1);
--- INSERT INTO `roles_menus` VALUES (75, 1);
--- INSERT INTO `roles_menus` VALUES (77, 1);
--- INSERT INTO `roles_menus` VALUES (78, 1);
--- INSERT INTO `roles_menus` VALUES (79, 1);
 INSERT INTO `roles_menus` VALUES (80, 1);
--- INSERT INTO `roles_menus` VALUES (82, 1);
--- INSERT INTO `roles_menus` VALUES (83, 1);
 INSERT INTO `roles_menus` VALUES (90, 1);
 INSERT INTO `roles_menus` VALUES (92, 1);
 INSERT INTO `roles_menus` VALUES (93, 1);
 INSERT INTO `roles_menus` VALUES (94, 1);
 INSERT INTO `roles_menus` VALUES (97, 1);
 INSERT INTO `roles_menus` VALUES (98, 1);
-INSERT INTO `roles_menus` VALUES (116, 1);
-INSERT INTO `roles_menus` VALUES (1, 2);
-INSERT INTO `roles_menus` VALUES (2, 2);
-INSERT INTO `roles_menus` VALUES (3, 2);
-INSERT INTO `roles_menus` VALUES (5, 2);
-INSERT INTO `roles_menus` VALUES (6, 2);
+
+-- INSERT INTO `roles_menus` VALUES (1, 2);
+-- INSERT INTO `roles_menus` VALUES (2, 2);
+-- INSERT INTO `roles_menus` VALUES (3, 2);
+--
+-- INSERT INTO `roles_menus` VALUES (6, 2);
+-- INSERT INTO `roles_menus` VALUES (7, 2);
+-- INSERT INTO `roles_menus` VALUES (8, 2);
 -- INSERT INTO `roles_menus` VALUES (9, 2);
-INSERT INTO `roles_menus` VALUES (10, 2);
-INSERT INTO `roles_menus` VALUES (11, 2);
-INSERT INTO `roles_menus` VALUES (14, 2);
--- INSERT INTO `roles_menus` VALUES (15, 2);
--- INSERT INTO `roles_menus` VALUES (18, 2);
--- INSERT INTO `roles_menus` VALUES (19, 2);
-INSERT INTO `roles_menus` VALUES (21, 2);
-INSERT INTO `roles_menus` VALUES (23, 2);
-INSERT INTO `roles_menus` VALUES (24, 2);
-INSERT INTO `roles_menus` VALUES (27, 2);
--- INSERT INTO `roles_menus` VALUES (28, 2);
--- INSERT INTO `roles_menus` VALUES (30, 2);
--- INSERT INTO `roles_menus` VALUES (33, 2);
--- INSERT INTO `roles_menus` VALUES (34, 2);
-INSERT INTO `roles_menus` VALUES (35, 2);
-INSERT INTO `roles_menus` VALUES (36, 2);
-INSERT INTO `roles_menus` VALUES (37, 2);
--- INSERT INTO `roles_menus` VALUES (38, 2);
--- INSERT INTO `roles_menus` VALUES (39, 2);
-INSERT INTO `roles_menus` VALUES (44, 2);
-INSERT INTO `roles_menus` VALUES (48, 2);
-INSERT INTO `roles_menus` VALUES (49, 2);
-INSERT INTO `roles_menus` VALUES (50, 2);
--- INSERT INTO `roles_menus` VALUES (77, 2);
--- INSERT INTO `roles_menus` VALUES (78, 2);
--- INSERT INTO `roles_menus` VALUES (79, 2);
+-- INSERT INTO `roles_menus` VALUES (10, 2);
+-- INSERT INTO `roles_menus` VALUES (11, 2);
+-- INSERT INTO `roles_menus` VALUES (14, 2);
+-- INSERT INTO `roles_menus` VALUES (21, 2);
+-- INSERT INTO `roles_menus` VALUES (23, 2);
+-- INSERT INTO `roles_menus` VALUES (24, 2);
+-- INSERT INTO `roles_menus` VALUES (27, 2);
+-- INSERT INTO `roles_menus` VALUES (35, 2);
+-- INSERT INTO `roles_menus` VALUES (36, 2);
+-- INSERT INTO `roles_menus` VALUES (37, 2);
+-- INSERT INTO `roles_menus` VALUES (44, 2);
+-- INSERT INTO `roles_menus` VALUES (48, 2);
+-- INSERT INTO `roles_menus` VALUES (49, 2);
+-- INSERT INTO `roles_menus` VALUES (50, 2);
+
 
 -- ----------------------------
 -- Table structure for user
+-- 添加了region_id 区域ID
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
@@ -756,6 +767,9 @@ CREATE TABLE `user`  (
   `dept_id` bigint(20) NULL DEFAULT NULL COMMENT '部门名称',
   `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号码',
   `job_id` bigint(20) NULL DEFAULT NULL COMMENT '岗位名称',
+--   -- 添加
+--   `region_id` bigint(20) NULL DEFAULT NULL COMMENT '行政区域名称',
+
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   `last_password_reset_time` datetime NULL DEFAULT NULL COMMENT '最后修改密码的日期',
   `nick_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -766,16 +780,22 @@ CREATE TABLE `user`  (
   INDEX `FK5rwmryny6jthaaxkogownknqp`(`dept_id`) USING BTREE,
   INDEX `FKfftoc2abhot8f2wu6cl9a5iky`(`job_id`) USING BTREE,
   INDEX `FKpq2dhypk2qgt68nauh2by22jb`(`avatar_id`) USING BTREE,
+--   -- 添加region_id
+--   INDEX `FKpq2dhvpkjqbtionvuh2vy00rd`(`region_id`) USING BTREE,
+
   CONSTRAINT `FK5rwmryny6jthaaxkogownknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `FKfftoc2abhot8f2wu6cl9a5iky` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `FKpq2dhypk2qgt68nauh2by22jb` FOREIGN KEY (`avatar_id`) REFERENCES `user_avatar` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+--   -- 添加region_id
+--   CONSTRAINT `FKpq2dhvpkjqbtionvuh2vy00rd` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统用户' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, NULL, 'zhengjie@tom.com', 1, '$2a$10$fP.426qKaTmix50Oln8L.uav55gELhAd0Eg66Av4oG86u8km7D/Ky', 'admin', 2, '18888888888', 11, '2018-08-23 09:11:56', '2019-05-18 17:34:21', '管理员', '男');
-INSERT INTO `user` VALUES (3, NULL, 'test@eladmin.net', 1, '$2a$10$HhxyGZy.ulf3RvAwaHUGb.k.2i9PBpv4YbLMJWp8pES7pPhTyRCF.', 'test', 2, '17777777777', 12, '2018-12-27 20:05:26', '2019-04-01 09:15:24', '测试', '男');
+INSERT INTO `user` VALUES (1, NULL, 'zhengjie@tom.com', 1, '$2a$10$fP.426qKaTmix50Oln8L.uav55gELhAd0Eg66Av4oG86u8km7D/Ky', 'admin', 4, '18888888888', 10, '2018-08-23 09:11:56', '2019-05-18 17:34:21', '管理员', '男');
+-- INSERT INTO `user` VALUES (3, NULL, 'test@eladmin.net', 1, '$2a$10$HhxyGZy.ulf3RvAwaHUGb.k.2i9PBpv4YbLMJWp8pES7pPhTyRCF.', 'test', 2, '17777777777', 12, '2018-12-27 20:05:26', '2019-04-01 09:15:24', '测试', '男');
 
 -- ----------------------------
 -- Table structure for user_avatar

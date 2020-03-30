@@ -76,6 +76,7 @@ public class AuthController {
         String password = new String(rsa.decrypt(authUser.getPassword(), KeyType.PrivateKey));
         // 查询验证码
         String code = (String) redisUtils.get(authUser.getUuid());
+        log.info("code:{}",code);
         // 清除验证码
         redisUtils.del(authUser.getUuid());
         if (StringUtils.isBlank(code)) {
@@ -123,6 +124,7 @@ public class AuthController {
         captcha.setLen(2);
         // 获取运算的结果
         String result = captcha.text();
+        log.info("result:{}",result);
         String uuid = properties.getCodeKey() + IdUtil.simpleUUID();
         // 保存
         redisUtils.set(uuid, result, expiration, TimeUnit.MINUTES);
