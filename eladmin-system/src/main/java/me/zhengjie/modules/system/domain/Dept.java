@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -36,16 +38,44 @@ public class Dept implements Serializable {
     private Boolean enabled;
 
     @Column(name = "pid",nullable = false)
-    @NotNull
     private Long pid;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "depts")
     private Set<Role> roles;
 
+    @ManyToOne
+    @JoinColumn(name = "region_id")
+    private Region region;
+
+    @Column(name = "dept_type")
+    private Integer deptType;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "short_name")
+    private String shortName;
+
+    @Column(name = "remark")
+    private String remark;
+
+    @Column(name = "create_uid")
+    private Long createUid;
+
     @Column(name = "create_time")
     @CreationTimestamp
     private Timestamp createTime;
+
+    @Column(name = "update_time")
+    @UpdateTimestamp
+    private Timestamp updateTime;
 
     public @interface Update {}
 

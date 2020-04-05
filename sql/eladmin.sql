@@ -70,6 +70,35 @@ INSERT INTO `column_config` VALUES (1, 'gen_test', 'id', 'int', NULL, 'auto_incr
 INSERT INTO `column_config` VALUES (2, 'gen_test', 'sex', 'int', NULL, '', b'1', NULL, '', b'1', b'0', 'NotNull', '性别', NULL);
 INSERT INTO `column_config` VALUES (3, 'gen_test', 'create_time', 'datetime', NULL, '', b'0', NULL, '', b'1', b'0', 'BetWeen', '', NULL);
 
+
+-- ----------------------------
+-- 添加行政区域表 region
+-- ----------------------------
+drop table if exists `region`;
+create table `region`
+(
+  `id`              varchar (255) not null primary key comment '行政区域ID',
+  `pid`             varchar(255) null default null comment '父级ID',
+  `level`           bigint(20) null default null comment '等级',
+  `name`            varchar(255) null default null comment '简称',
+  `pinyin`          varchar(255) null default null comment '拼音',
+  `ext_id`          varchar (255) null default null comment '拓展ID',
+  `province_id`     varchar (255) null default null comment '省ID',
+  `province_name`   varchar (255) null default null comment '省名',
+  `city_id`         varchar (255) null default null comment '市ID',
+  `city_name`       varchar (255) null default null comment '市名',
+  `area_id`         varchar (255) null default null comment '县ID',
+  `area_name`       varchar (255) null default null comment '县名',
+  `town_id`         varchar (255) null default null comment '乡镇ID',
+  `town_name`       varchar (255) null default null comment '乡镇名',
+  `ext_name`        varchar (255) null default null comment '拓展名'
+) engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- Records of region
+insert into `region` values ('431125','431100',2,'江永','jiang yong','431125000000','430000','湖南省','431100','永州市','431125','江永县',null ,null ,'江永县');
+insert into `region` values ('431124','431100',2,'道县','dao xian','431124000000','430000','湖南省','431100','永州市','431124','道县',null ,null ,'道县');
+
+
 -- ----------------------------
 -- Table structure for dept 部门表
 -- 对应于单位表
@@ -80,42 +109,35 @@ CREATE TABLE `dept`  (
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
   `pid` bigint(20) NOT NULL COMMENT '上级部门',
   `enabled` bit(1) NOT NULL COMMENT '状态',
---   -- 添加行政区域ID
---   `region_id` bigint(20) not null comment '所属行政区域ID',
+-- 添加行政区域ID
+  `region_id` varchar (255) null default null comment '所属行政区域ID',
+  `type` bigint(10) null default null comment '机构类型',
+  `address` varchar (255) null default null comment '地址',
+  `code` varchar (255) null default null comment '编码',
+  `full_name` varchar (255) null default null comment '全称',
+  `short_name` varchar (255) null default null comment '简称',
+  `remark` varchar (255) null default null comment '备注',
+  `create_uid` bigint(20) null default null comment '创建者ID',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
-  PRIMARY KEY (`id`) USING BTREE
---   INDEX `FK5tpkpudf6d9nboiijdbgpnmddc`(`region_id`) USING BTREE,
---   CONSTRAINT `FK5tpkpudf6d9nboiijdbgpnmddc` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `update_time` datetime null default null comment '修改日期',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `FK5tpkpudf6d9nboiijdbgpnmddc`(`region_id`) USING BTREE,
+  CONSTRAINT `FK5tpkpudf6d9nboiijdbgpnmddc` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部门' ROW_FORMAT = Compact;
-
 
 -- ----------------------------
 -- Records of dept
 -- ----------------------------
-INSERT INTO `dept` VALUES (1, '江永县农业局', 0, b'1', '2020-03-01 12:07:37');
-INSERT INTO `dept` VALUES (2, '采购部', 1, b'1', '2020-03-25 11:04:50');
-INSERT INTO `dept` VALUES (3, '生产部', 1, b'1', '2020-03-25 11:04:53');
-INSERT INTO `dept` VALUES (4, '道县农业局', 0, b'1', '2020-03-01 12:07:37');
-INSERT INTO `dept` VALUES (5, '采购部', 4, b'1', '2020-03-25 11:04:50');
-INSERT INTO `dept` VALUES (6, '生产部', 4, b'1', '2020-03-25 11:04:53');
+-- 需修改insert
+INSERT INTO `dept` VALUES (1, '江永县农业局', 0, b'1', '431125',0,'湖南省永州市江永县',null ,'湖南省永州市江永县农业局',null,null ,1,'2020-03-01 12:07:37',null );
+INSERT INTO `dept` VALUES (2, '采购部', 1, b'1', '431125',0,'湖南省永州市江永县',null ,'湖南省永州市江永县农业局',null,null ,1,'2020-03-01 12:07:37',null );
+INSERT INTO `dept` VALUES (3, '生产部', 1, b'1', '431125',0,'湖南省永州市江永县',null ,'湖南省永州市江永县农业局',null,null ,1,'2020-03-01 12:07:37',null );
+-- INSERT INTO `dept` VALUES (4, '道县农业局', 0, b'1', '2020-03-01 12:07:37');
+-- -- INSERT INTO `dept` VALUES (5, '采购部', 4, b'1', '2020-03-25 11:04:50');
+-- -- INSERT INTO `dept` VALUES (6, '生产部', 4, b'1', '2020-03-25 11:04:53');
 
 
--- ----------------------------
--- 添加行政区域表 region
--- ----------------------------
--- drop table if exists `region`;
--- create table `region`
--- (
---   `id`              varchar (255) not null primary key comment '行政区域ID',
---   `pid`             varchar(255) null default null comment '父级ID',
---   `level`           bigint(20) null default null comment '等级',
---   `name`            varchar(255) null default null comment '简称',
---   `pinyin`          varchar(255) null default null comment '拼音',
---   `ext_id`          varchar (255) not null primary key comment '拓展ID',
---   `ext_name`        varchar (255) not null primary key comment '拓展名'
--- ) engine = InnoDB
---   default CHARSET = utf8
---   ROW_FORMAT = Compact;
+
 
 -- ----------------------------
 -- Table structure for dict
@@ -232,8 +254,8 @@ CREATE TABLE `job`  (
 -- ----------------------------
 INSERT INTO `job` VALUES (8, '采购员', b'1', 3, 2, '2019-03-29 14:52:28');
 INSERT INTO `job` VALUES (10, '数据分析员', b'1', 4, 3, '2019-03-29 14:55:51');
-INSERT INTO `job` VALUES (11, '测试员', b'1', 2, 5, '2019-03-31 13:39:30');
-INSERT INTO `job` VALUES (12, '操作员', b'1', 5, 6, '2019-03-31 13:39:43');
+-- INSERT INTO `job` VALUES (11, '测试员', b'1', 2, 5, '2019-03-31 13:39:30');
+-- INSERT INTO `job` VALUES (12, '操作员', b'1', 5, 6, '2019-03-31 13:39:43');
 
 -- ----------------------------
 -- Table structure for local_storage
@@ -728,29 +750,6 @@ INSERT INTO `roles_menus` VALUES (94, 1);
 INSERT INTO `roles_menus` VALUES (97, 1);
 INSERT INTO `roles_menus` VALUES (98, 1);
 
--- INSERT INTO `roles_menus` VALUES (1, 2);
--- INSERT INTO `roles_menus` VALUES (2, 2);
--- INSERT INTO `roles_menus` VALUES (3, 2);
---
--- INSERT INTO `roles_menus` VALUES (6, 2);
--- INSERT INTO `roles_menus` VALUES (7, 2);
--- INSERT INTO `roles_menus` VALUES (8, 2);
--- INSERT INTO `roles_menus` VALUES (9, 2);
--- INSERT INTO `roles_menus` VALUES (10, 2);
--- INSERT INTO `roles_menus` VALUES (11, 2);
--- INSERT INTO `roles_menus` VALUES (14, 2);
--- INSERT INTO `roles_menus` VALUES (21, 2);
--- INSERT INTO `roles_menus` VALUES (23, 2);
--- INSERT INTO `roles_menus` VALUES (24, 2);
--- INSERT INTO `roles_menus` VALUES (27, 2);
--- INSERT INTO `roles_menus` VALUES (35, 2);
--- INSERT INTO `roles_menus` VALUES (36, 2);
--- INSERT INTO `roles_menus` VALUES (37, 2);
--- INSERT INTO `roles_menus` VALUES (44, 2);
--- INSERT INTO `roles_menus` VALUES (48, 2);
--- INSERT INTO `roles_menus` VALUES (49, 2);
--- INSERT INTO `roles_menus` VALUES (50, 2);
-
 
 -- ----------------------------
 -- Table structure for user
@@ -764,11 +763,16 @@ CREATE TABLE `user`  (
   `enabled` bigint(20) NULL DEFAULT NULL COMMENT '状态：1启用、0禁用',
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名',
+
+-- 添加姓名
+   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL comment '姓名',
+
   `dept_id` bigint(20) NULL DEFAULT NULL COMMENT '部门名称',
   `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号码',
   `job_id` bigint(20) NULL DEFAULT NULL COMMENT '岗位名称',
---   -- 添加
---   `region_id` bigint(20) NULL DEFAULT NULL COMMENT '行政区域名称',
+
+  -- 添加
+  `region_id` varchar(255) NULL DEFAULT NULL COMMENT '行政区域名称',
 
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建日期',
   `last_password_reset_time` datetime NULL DEFAULT NULL COMMENT '最后修改密码的日期',
@@ -780,21 +784,21 @@ CREATE TABLE `user`  (
   INDEX `FK5rwmryny6jthaaxkogownknqp`(`dept_id`) USING BTREE,
   INDEX `FKfftoc2abhot8f2wu6cl9a5iky`(`job_id`) USING BTREE,
   INDEX `FKpq2dhypk2qgt68nauh2by22jb`(`avatar_id`) USING BTREE,
---   -- 添加region_id
---   INDEX `FKpq2dhvpkjqbtionvuh2vy00rd`(`region_id`) USING BTREE,
+  -- 添加region_id
+  INDEX `FKpq2dhvpkjqbtionvuh2vy00rd`(`region_id`) USING BTREE,
 
   CONSTRAINT `FK5rwmryny6jthaaxkogownknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `FKfftoc2abhot8f2wu6cl9a5iky` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `FKpq2dhypk2qgt68nauh2by22jb` FOREIGN KEY (`avatar_id`) REFERENCES `user_avatar` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
---   -- 添加region_id
---   CONSTRAINT `FKpq2dhvpkjqbtionvuh2vy00rd` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `FKpq2dhypk2qgt68nauh2by22jb` FOREIGN KEY (`avatar_id`) REFERENCES `user_avatar` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  -- 添加region_id
+  CONSTRAINT `FKpq2dhvpkjqbtionvuh2vy00rd` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统用户' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, NULL, 'zhengjie@tom.com', 1, '$2a$10$fP.426qKaTmix50Oln8L.uav55gELhAd0Eg66Av4oG86u8km7D/Ky', 'admin', 4, '18888888888', 10, '2018-08-23 09:11:56', '2019-05-18 17:34:21', '管理员', '男');
+INSERT INTO `user` VALUES (1, NULL, 'zhengjie@tom.com', 1, '$2a$10$fP.426qKaTmix50Oln8L.uav55gELhAd0Eg66Av4oG86u8km7D/Ky', 'admin', '王志通',2, '18888888888', 10,'431125' , '2018-08-23 09:11:56', '2019-05-18 17:34:21', '管理员', '男');
 -- INSERT INTO `user` VALUES (3, NULL, 'test@eladmin.net', 1, '$2a$10$HhxyGZy.ulf3RvAwaHUGb.k.2i9PBpv4YbLMJWp8pES7pPhTyRCF.', 'test', 2, '17777777777', 12, '2018-12-27 20:05:26', '2019-04-01 09:15:24', '测试', '男');
 
 -- ----------------------------

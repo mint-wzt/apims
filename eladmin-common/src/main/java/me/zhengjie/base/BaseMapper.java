@@ -6,7 +6,7 @@ import java.util.List;
  * @author Zheng Jie
  * @date 2018-11-23
  */
-public interface BaseMapper<D, E> {
+public interface BaseMapper<D, E>{
 
     /**
      * DTO转Entity

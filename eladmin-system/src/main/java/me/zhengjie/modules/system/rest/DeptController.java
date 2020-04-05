@@ -1,8 +1,12 @@
 package me.zhengjie.modules.system.rest;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSON;
+import com.qiniu.util.Json;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.aop.log.Log;
 import me.zhengjie.config.DataScope;
 import me.zhengjie.exception.BadRequestException;
@@ -16,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashSet;
@@ -23,9 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
-* @author Zheng Jie
-* @date 2019-03-25
-*/
+ * @author Zheng Jie
+ * @date 2019-03-25
+ */
+@Slf4j
 @RestController
 @Api(tags = "系统：部门管理")
 @RequestMapping("/api/dept")
@@ -54,29 +60,32 @@ public class DeptController {
     @ApiOperation("查询部门")
     @GetMapping
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> getDepts(DeptQueryCriteria criteria){
+    public ResponseEntity<Object> getDepts(DeptQueryCriteria criteria) {
         // 数据权限
         criteria.setIds(dataScope.getDeptIds());
         List<DeptDto> deptDtos = deptService.queryAll(criteria);
-        return new ResponseEntity<>(deptService.buildTree(deptDtos),HttpStatus.OK);
+        Object o = deptService.buildTree(deptDtos);
+        log.info(JSON.toJSONString(o));
+        return new ResponseEntity<>(o, HttpStatus.OK);
     }
 
     @Log("新增部门")
     @ApiOperation("新增部门")
     @PostMapping
     @PreAuthorize("@el.check('dept:add')")
-    public ResponseEntity<Object> create(@Validated @RequestBody Dept resources){
+    public ResponseEntity<Object> create(@Validated @RequestBody Dept resources) {
+        log.info(JSON.toJSONString(resources));
         if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
+            throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
         }
-        return new ResponseEntity<>(deptService.create(resources),HttpStatus.CREATED);
+        return new ResponseEntity<>(deptService.create(resources), HttpStatus.CREATED);
     }
 
     @Log("修改部门")
     @ApiOperation("修改部门")
     @PutMapping
     @PreAuthorize("@el.check('dept:edit')")
-    public ResponseEntity<Object> update(@Validated(Dept.Update.class) @RequestBody Dept resources){
+    public ResponseEntity<Object> update(@Validated(Dept.Update.class) @RequestBody Dept resources) {
         deptService.update(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -85,18 +94,18 @@ public class DeptController {
     @ApiOperation("删除部门")
     @DeleteMapping
     @PreAuthorize("@el.check('dept:del')")
-    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids){
+    public ResponseEntity<Object> delete(@RequestBody Set<Long> ids) {
         Set<DeptDto> deptDtos = new HashSet<>();
         for (Long id : ids) {
             List<Dept> deptList = deptService.findByPid(id);
             deptDtos.add(deptService.findById(id));
-            if(CollectionUtil.isNotEmpty(deptList)){
+            if (CollectionUtil.isNotEmpty(deptList)) {
                 deptDtos = deptService.getDeleteDepts(deptList, deptDtos);
             }
         }
         try {
             deptService.delete(deptDtos);
-        }catch (Throwable e){
+        } catch (Throwable e) {
             ThrowableUtil.throwForeignKeyException(e, "所选部门中存在岗位或者角色关联，请取消关联后再试");
         }
         return new ResponseEntity<>(HttpStatus.OK);

@@ -30,6 +30,8 @@ public class UserDto implements Serializable {
 
     private String phone;
 
+    private String name;
+
     private Boolean enabled;
 
     @JsonIgnore
@@ -45,7 +47,11 @@ public class UserDto implements Serializable {
 
     private DeptSmallDto dept;
 
+    private RegionSmallDto region;
+
     private Long deptId;
 
     private Timestamp createTime;
+
+
 }

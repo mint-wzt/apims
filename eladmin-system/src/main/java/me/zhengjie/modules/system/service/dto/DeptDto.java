@@ -20,10 +20,16 @@ public class DeptDto implements Serializable {
 
     private String name;
 
+    private String address;
+
+    private Integer deptType;
+
     @NotNull
     private Boolean enabled;
 
     private Long pid;
+
+    private RegionSmallDto region;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<DeptDto> children;

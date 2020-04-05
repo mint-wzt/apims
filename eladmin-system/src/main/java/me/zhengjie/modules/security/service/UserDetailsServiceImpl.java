@@ -1,5 +1,7 @@
 package me.zhengjie.modules.security.service;
 
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.security.vo.JwtUser;
 import me.zhengjie.modules.system.service.RoleService;
@@ -18,6 +20,7 @@ import java.util.Optional;
  */
 @Service("userDetailsService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserService userService;
@@ -43,7 +46,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails createJwtUser(UserDto user) {
-        return new JwtUser(
+        JwtUser jwtUser =  new JwtUser(
                 user.getId(),
                 user.getUsername(),
                 user.getNickName(),
@@ -52,12 +55,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 user.getPhone(),
+                user.getName(),
                 Optional.ofNullable(user.getDept()).map(DeptSmallDto::getName).orElse(null),
                 Optional.ofNullable(user.getJob()).map(JobSmallDto::getName).orElse(null),
+                Optional.ofNullable(user.getRegion()).map(RegionSmallDto::getExtName).orElse(null),
                 roleService.mapToGrantedAuthorities(user),
                 user.getEnabled(),
                 user.getCreateTime(),
                 user.getLastPasswordResetTime()
         );
+        log.info(JSON.toJSONString(jwtUser));
+        return jwtUser;
     }
 }

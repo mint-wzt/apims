@@ -2,8 +2,11 @@ package me.zhengjie.modules.system.rest;
 
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.annotation.AnonymousAccess;
 import me.zhengjie.aop.log.Log;
 import me.zhengjie.config.DataScope;
 import me.zhengjie.domain.VerificationCode;
@@ -39,6 +42,7 @@ import java.util.stream.Collectors;
  * @date 2018-11-23
  */
 @Api(tags = "系统：用户管理")
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -67,6 +71,13 @@ public class UserController {
     @PreAuthorize("@el.check('user:list')")
     public void download(HttpServletResponse response, UserQueryCriteria criteria) throws IOException {
         userService.download(userService.queryAll(criteria), response);
+    }
+
+    @AnonymousAccess
+    @ApiOperation("测试查询用户")
+    @GetMapping(value = "/test")
+    public ResponseEntity<Object> getUser(UserQueryCriteria criteria){
+        return new ResponseEntity<>(userService.findByName(criteria.getBlurry()),HttpStatus.OK);
     }
 
     @Log("查询用户")

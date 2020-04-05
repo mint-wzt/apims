@@ -55,6 +55,8 @@ public class User implements Serializable {
 
     private String password;
 
+    private String name;
+
     @Column(name = "create_time")
     @CreationTimestamp
     private Timestamp createTime;
@@ -73,6 +75,10 @@ public class User implements Serializable {
     @OneToOne
     @JoinColumn(name = "dept_id")
     private Dept dept;
+
+    @OneToOne
+    @JoinColumn(name = "region_id")
+    private Region region;
 
     public @interface Update {}
 

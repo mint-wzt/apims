@@ -26,6 +26,7 @@ public class JwtUser implements UserDetails {
 
     private final String sex;
 
+
     @JsonIgnore
     private final String password;
 
@@ -35,9 +36,13 @@ public class JwtUser implements UserDetails {
 
     private final String phone;
 
+    private final String name;
+
     private final String dept;
 
     private final String job;
+
+    private final String region;
 
     @JsonIgnore
     private final Collection<GrantedAuthority> authorities;

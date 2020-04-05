@@ -20,7 +20,7 @@ public class UserQueryCriteria implements Serializable {
     @Query(propName = "id", type = Query.Type.IN, joinName = "dept")
     private Set<Long> deptIds;
 
-    @Query(blurry = "email,username,nickName")
+    @Query(blurry = "email,username,nickName,name")
     private String blurry;
 
     @Query

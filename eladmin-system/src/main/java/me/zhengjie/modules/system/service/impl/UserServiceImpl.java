@@ -1,9 +1,13 @@
 package me.zhengjie.modules.system.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.exception.EntityNotFoundException;
 import me.zhengjie.modules.system.domain.UserAvatar;
+import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.repository.UserAvatarRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.UserService;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +38,7 @@ import java.util.stream.Collectors;
  * @date 2018-11-23
  */
 @Service
+@Slf4j
 @CacheConfig(cacheNames = "user")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
@@ -41,28 +47,30 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RedisUtils redisUtils;
     private final UserAvatarRepository userAvatarRepository;
+    private final DeptRepository deptRepository;
 
     @Value("${file.avatar}")
     private String avatar;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RedisUtils redisUtils, UserAvatarRepository userAvatarRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RedisUtils redisUtils, UserAvatarRepository userAvatarRepository, DeptRepository deptRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.redisUtils = redisUtils;
         this.userAvatarRepository = userAvatarRepository;
+        this.deptRepository = deptRepository;
     }
 
     @Override
     @Cacheable
     public Object queryAll(UserQueryCriteria criteria, Pageable pageable) {
-        Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),pageable);
+        Page<User> page = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
         return PageUtil.toPage(page.map(userMapper::toDto));
     }
 
     @Override
     @Cacheable
     public List<UserDto> queryAll(UserQueryCriteria criteria) {
-        List<User> users = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder));
+        List<User> users = userRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
         return userMapper.toDto(users);
     }
 
@@ -70,7 +78,7 @@ public class UserServiceImpl implements UserService {
     @Cacheable(key = "#p0")
     public UserDto findById(long id) {
         User user = userRepository.findById(id).orElseGet(User::new);
-        ValidationUtil.isNull(user.getId(),"User","id",id);
+        ValidationUtil.isNull(user.getId(), "User", "id", id);
         return userMapper.toDto(user);
     }
 
@@ -78,12 +86,13 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public UserDto create(User resources) {
-        if(userRepository.findByUsername(resources.getUsername())!=null){
-            throw new EntityExistException(User.class,"username",resources.getUsername());
+        if (userRepository.findByUsername(resources.getUsername()) != null) {
+            throw new EntityExistException(User.class, "username", resources.getUsername());
         }
-        if(userRepository.findByEmail(resources.getEmail())!=null){
-            throw new EntityExistException(User.class,"email",resources.getEmail());
+        if (userRepository.findByEmail(resources.getEmail()) != null) {
+            throw new EntityExistException(User.class, "email", resources.getEmail());
         }
+        resources.setRegion(deptRepository.findById(resources.getDept().getId()).orElseGet(Dept::new).getRegion());
         return userMapper.toDto(userRepository.save(resources));
     }
 
@@ -92,16 +101,16 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void update(User resources) {
         User user = userRepository.findById(resources.getId()).orElseGet(User::new);
-        ValidationUtil.isNull(user.getId(),"User","id",resources.getId());
+        ValidationUtil.isNull(user.getId(), "User", "id", resources.getId());
         User user1 = userRepository.findByUsername(resources.getUsername());
         User user2 = userRepository.findByEmail(resources.getEmail());
 
-        if(user1 !=null&&!user.getId().equals(user1.getId())){
-            throw new EntityExistException(User.class,"username",resources.getUsername());
+        if (user1 != null && !user.getId().equals(user1.getId())) {
+            throw new EntityExistException(User.class, "username", resources.getUsername());
         }
 
-        if(user2!=null&&!user.getId().equals(user2.getId())){
-            throw new EntityExistException(User.class,"email",resources.getEmail());
+        if (user2 != null && !user.getId().equals(user2.getId())) {
+            throw new EntityExistException(User.class, "email", resources.getEmail());
         }
 
         // 如果用户的角色改变了，需要手动清理下缓存
@@ -146,13 +155,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Cacheable(key = "'loadUserByUsername:'+#p0")
+//    @CacheEvict(allEntries = true)
     public UserDto findByName(String userName) {
         User user;
-        if(ValidationUtil.isEmail(userName)){
+        if (ValidationUtil.isEmail(userName)) {
             user = userRepository.findByEmail(userName);
         } else {
             user = userRepository.findByUsername(userName);
         }
+        log.info(JSON.toJSONString(user));
         if (user == null) {
             throw new EntityNotFoundException(User.class, "name", userName);
         } else {
@@ -164,7 +175,7 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void updatePass(String username, String pass) {
-        userRepository.updatePass(username,pass,new Date());
+        userRepository.updatePass(username, pass, new Date());
     }
 
     @Override
@@ -174,15 +185,15 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(SecurityUtils.getUsername());
         UserAvatar userAvatar = user.getUserAvatar();
         String oldPath = "";
-        if(userAvatar != null){
-           oldPath = userAvatar.getPath();
+        if (userAvatar != null) {
+            oldPath = userAvatar.getPath();
         }
         File file = FileUtil.upload(multipartFile, avatar);
         assert file != null;
-        userAvatar = userAvatarRepository.save(new UserAvatar(userAvatar,file.getName(), file.getPath(), FileUtil.getSize(multipartFile.getSize())));
+        userAvatar = userAvatarRepository.save(new UserAvatar(userAvatar, file.getName(), file.getPath(), FileUtil.getSize(multipartFile.getSize())));
         user.setUserAvatar(userAvatar);
         userRepository.save(user);
-        if(StringUtils.isNotBlank(oldPath)){
+        if (StringUtils.isNotBlank(oldPath)) {
             FileUtil.del(oldPath);
         }
     }
@@ -191,7 +202,7 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void updateEmail(String username, String email) {
-        userRepository.updateEmail(username,email);
+        userRepository.updateEmail(username, email);
     }
 
     @Override
@@ -199,7 +210,7 @@ public class UserServiceImpl implements UserService {
         List<Map<String, Object>> list = new ArrayList<>();
         for (UserDto userDTO : queryAll) {
             List<String> roles = userDTO.getRoles().stream().map(RoleSmallDto::getName).collect(Collectors.toList());
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("用户名", userDTO.getUsername());
             map.put("头像", userDTO.getAvatar());
             map.put("邮箱", userDTO.getEmail());
