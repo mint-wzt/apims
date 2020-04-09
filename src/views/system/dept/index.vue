@@ -139,6 +139,11 @@ export default {
       type: '0'
     }
   },
+  created() {
+    this.$nextTick(() => {
+      this.crud.toQuery()
+    })
+  },
   methods: {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {

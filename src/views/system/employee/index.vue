@@ -32,61 +32,31 @@
               v-model="query.blurry"
               clearable
               size="small"
-              placeholder="输入名称或者邮箱搜索"
+              placeholder="输入姓名或者地址搜索"
               style="width: 200px;"
               class="filter-item"
               @keyup.enter.native="crud.toQuery"
             />
-            <el-date-picker
-              v-model="query.createTime"
-              :default-time="['00:00:00','23:59:59']"
-              type="daterange"
-              range-separator=":"
-              size="small"
-              class="date-item"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            />
-            <el-select
-              v-model="query.enabled"
-              clearable
-              size="small"
-              placeholder="状态"
-              class="filter-item"
-              style="width: 90px"
-              @change="crud.toQuery"
-            >
-              <el-option
-                v-for="item in enabledTypeOptions"
-                :key="item.key"
-                :label="item.display_name"
-                :value="item.key"
-              />
-            </el-select>
             <rrOperation :crud="crud" />
           </div>
           <crudOperation show="" :permission="permission" />
         </div>
         <!--表单渲染-->
         <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="570px">
-          <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="66px">
-            <el-form-item label="用户名" prop="username">
-              <el-input v-model="form.username" />
-            </el-form-item>
-            <el-form-item label="电话" prop="phone">
-              <el-input v-model.number="form.phone" />
-            </el-form-item>
+          <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="76px">
             <el-form-item label="姓名" prop="name">
               <el-input v-model="form.name" />
             </el-form-item>
-            <el-form-item label="昵称" prop="nickName">
-              <el-input v-model="form.nickName" />
+            <el-form-item label="性别">
+              <el-radio-group v-model="form.sex" style="width: 178px">
+                <el-radio label="男">男</el-radio>
+                <el-radio label="女">女</el-radio>
+              </el-radio-group>
             </el-form-item>
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" />
+            <el-form-item label="编号" prop="number">
+              <el-input v-model="form.number" />
             </el-form-item>
-            <el-form-item label="部门" prop="dept.id">
+            <el-form-item label="机构" prop="dept.id">
               <treeselect
                 v-model="form.dept.id"
                 :options="depts"
@@ -95,48 +65,46 @@
                 @select="selectFun"
               />
             </el-form-item>
-            <el-form-item label="岗位" prop="job.id">
-              <el-select v-model="form.job.id" style="width: 178px" placeholder="请先选择部门">
+            <el-form-item label="职位" prop="position">
+              <el-input v-model="form.position" />
+            </el-form-item>
+            <el-form-item label="电话" prop="contact">
+              <el-input v-model="form.contact" />
+            </el-form-item>
+            <el-form-item label="身份证" prop="idNumber">
+              <el-input v-model="form.idNumber" />
+            </el-form-item>
+            <el-form-item label="种植面积" prop="cultivatedArea">
+              <el-input v-model="form.cultivatedArea" placeholder="xx亩" />
+            </el-form-item>
+            <el-form-item label="所在地区" prop="region" style="width: 370px;">
+              <v-region type="column" :town="true" @values="regionChange" />
+            </el-form-item>
+            <el-form-item label="详细地址" prop="address">
+              <el-input v-model="form.address" style="width: 370px;" placeholder="如村、道路、门牌号、小区、楼栋号、单元室等" />
+            </el-form-item>
+            <el-form-item label="健康情况" prop="healthCondition">
+              <el-input v-model="form.healthCondition" />
+            </el-form-item>
+            <el-form-item label="致贫原因" prop="causePoverty">
+              <el-input v-model="form.causePoverty" />
+            </el-form-item>
+            <el-form-item label="家庭情况" prop="familySituation">
+              <el-input v-model="form.familySituation" placeholder="家庭人口数等情况" />
+            </el-form-item>
+            <el-form-item label="教育水平" prop="educationLevel">
+              <!--              <el-input v-model="form.educationLevel" />-->
+              <el-select v-model="form.educationLevel" placeholder="请选择教育水平">
                 <el-option
-                  v-for="(item, index) in jobs"
-                  :key="item.name + index"
-                  :label="item.name"
-                  :value="item.id"
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="性别">
-              <el-radio-group v-model="form.sex" style="width: 178px">
-                <el-radio label="男">男</el-radio>
-                <el-radio label="女">女</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.enabled" :disabled="form.id === user.id">
-                <el-radio
-                  v-for="item in dict.user_status"
-                  :key="item.id"
-                  :label="item.value"
-                >{{ item.label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 0;" label="角色" prop="roles">
-              <el-select
-                v-model="form.roles"
-                style="width: 437px"
-                multiple
-                placeholder="请选择"
-                @remove-tag="deleteTag"
-                @change="changeRole"
-              >
-                <el-option
-                  v-for="item in roles"
-                  :key="item.name"
-                  :disabled="level !== 1 && item.level <= level"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
+            <el-form-item label="负责人" prop="responsiblePerson">
+              <el-input v-model="form.responsiblePerson" />
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -147,35 +115,25 @@
         <!--表格渲染-->
         <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
           <el-table-column :selectable="checkboxT" type="selection" width="55" />
-          <el-table-column v-if="columns.visible('username')" :show-overflow-tooltip="true" prop="username" label="用户名" />
+          <el-table-column v-if="columns.visible('number')" :show-overflow-tooltip="true" prop="number" label="编号" />
           <el-table-column v-if="columns.visible('name')" :show-overflow-tooltip="true" prop="name" label="姓名" />
-          <el-table-column v-if="columns.visible('sex')" prop="sex" label="性别" />
-          <el-table-column v-if="columns.visible('region')" :show-overflow-tooltip="true" width="125" prop="region.extName" label="地区" />
-          <el-table-column v-if="columns.visible('dept')" :show-overflow-tooltip="true" width="110" prop="dept" label="部门 / 岗位">
+          <el-table-column v-if="columns.visible('sex')" :show-overflow-tooltip="true" prop="sex" label="性别" />
+          <el-table-column v-if="columns.visible('dept')" :show-overflow-tooltip="true" width="125" prop="dept" label="部门 / 岗位">
             <template slot-scope="scope">
-              <div>{{ scope.row.dept.name }} / {{ scope.row.job.name }}</div>
+              <div>{{ scope.row.dept.name }} / {{ scope.row.position }}</div>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns.visible('phone')" :show-overflow-tooltip="true" prop="phone" width="100" label="电话" />
-          <el-table-column v-if="columns.visible('email')" :show-overflow-tooltip="true" width="125" prop="email" label="邮箱" />
-          <el-table-column v-if="columns.visible('enabled')" label="状态" align="center" prop="enabled">
+          <el-table-column v-if="columns.visible('address')" :show-overflow-tooltip="true" width="125" prop="address" label="家庭住址" />
+          <el-table-column v-if="columns.visible('contact')" :show-overflow-tooltip="true" prop="contact" width="100" label="电话" />
+          <el-table-column v-if="columns.visible('idNumber')" :show-overflow-tooltip="true" prop="idNumber" width="100" label="身份证号" />
+          <el-table-column v-if="columns.visible('cultivatedArea')" :show-overflow-tooltip="true" prop="cultivatedArea" width="100" label="种植面积">
             <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.enabled"
-                :disabled="user.id === scope.row.id"
-                active-color="#409EFF"
-                inactive-color="#F56C6C"
-                @change="changeEnabled(scope.row, scope.row.enabled)"
-              />
+              <span>{{ scope.row.cultivatedArea }} 亩</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" prop="createTime" width="140" label="创建日期">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
+          <el-table-column v-if="columns.visible('responsiblePerson')" :show-overflow-tooltip="true" prop="responsiblePerson" width="100" label="负责人" />
           <el-table-column
-            v-permission="['admin','user:edit','user:del']"
+            v-permission="['admin','employee:edit','employee:del']"
             label="操作"
             width="125"
             align="center"
@@ -185,7 +143,6 @@
               <udOperation
                 :data="scope.row"
                 :permission="permission"
-                :disabled-dle="scope.row.id === user.id"
               />
             </template>
           </el-table-column>
@@ -198,11 +155,9 @@
 </template>
 
 <script>
-import crudUser from '@/api/system/user'
+import crudEmployee from '@/api/system/employee'
 import { isvalidPhone } from '@/utils/validate'
 import { getDepts } from '@/api/system/dept'
-import { getAll, getLevel } from '@/api/system/role'
-import { getAllJob } from '@/api/system/job'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
@@ -214,10 +169,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 let userRoles = []
 // crud交由presenter持有
-const defaultCrud = CRUD({ title: '用户', url: 'api/users', crudMethod: { ...crudUser }})
-const defaultForm = { id: null, username: null, name: null, nickName: null, sex: '男', email: null, enabled: 'false', roles: [], job: { id: null }, dept: { id: null }, phone: null }
+const defaultCrud = CRUD({ title: '用户', url: 'api/employee', crudMethod: { ...crudEmployee }})
+const defaultForm = { id: null, number: null, name: null, sex: '男', position: null, dept: { id: null, name: null },
+  contact: null, idNumber: null, address: null, healthCondition: null, causePoverty: null,
+  responsiblePerson: null, educationLevel: null, familySituation: null, cultivatedArea: null, email: null, enabled: 'false', phone: null }
 export default {
-  name: 'User',
+  name: 'Employee',
   components: { Treeselect, crudOperation, rrOperation, udOperation, pagination },
   mixins: [presenter(defaultCrud), header(), form(defaultForm), crud()],
   // 数据字典
@@ -233,40 +190,66 @@ export default {
         callback()
       }
     }
+    // 自定义验证
+    // const validIDNumber = (rule, value, callback) => {
+    //   if (!value) {
+    //     callback(new Error('请输入身份证号码'))
+    //   } else if (!validateIdNo(value)) {
+    //     callback(new Error('请输入正确的身份证号码'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       height: document.documentElement.clientHeight - 180 + 'px;',
       deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
       defaultProps: { children: 'children', label: 'name' },
       permission: {
-        add: ['admin', 'user:add'],
-        edit: ['admin', 'user:edit'],
-        del: ['admin', 'user:del']
+        add: ['admin', 'employee:add'],
+        edit: ['admin', 'employee:edit'],
+        del: ['admin', 'employee:del']
       },
       enabledTypeOptions: [
         { key: 'true', display_name: '激活' },
         { key: 'false', display_name: '锁定' }
       ],
       rules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-        ],
         name: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ],
-        nickName: [
-          { required: true, message: '请输入用户昵称', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-        ],
-        phone: [
+        contact: [
           { required: true, trigger: 'blur', validator: validPhone }
         ]
-      }
+        // idNumber: [
+        //   { required: true, trigger: 'blur', validator: validateIdNo }
+        // ]
+      },
+      options: [{
+        value: '小学',
+        label: '小学'
+      }, {
+        value: '初中',
+        label: '初中'
+      }, {
+        value: '高中',
+        label: '高中'
+      }, {
+        value: '专科',
+        label: '专科'
+      }, {
+        value: '本科',
+        label: '本科'
+      }, {
+        value: '研究生',
+        label: '研究生'
+      }, {
+        value: '博士',
+        label: '博士'
+      }, {
+        value: '-',
+        label: '-'
+      }]
     }
   },
   computed: {
@@ -278,7 +261,6 @@ export default {
     this.$nextTick(() => {
       this.getDeptDatas()
       this.crud.toQuery()
-      this.crud.msg.add = '新增成功，默认密码：123456'
     })
   },
   mounted: function() {
@@ -319,22 +301,22 @@ export default {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
       this.getDepts()
-      this.getRoles()
-      this.getRoleLevel()
-      form.enabled = form.enabled.toString()
+      // this.getRoles()
+      // this.getRoleLevel()
+      // form.enabled = form.enabled.toString()
     },
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
-      this.getJobs(this.form.dept.id)
-      userRoles = []
-      const roles = []
-      form.roles.forEach(function(role, index) {
-        roles.push(role.id)
-        // 初始化编辑时候的角色
-        const rol = { id: role.id }
-        userRoles.push(rol)
-      })
-      form.roles = roles
+      // this.getJobs(this.form.dept.id)
+      // userRoles = []
+      // const roles = []
+      // form.roles.forEach(function(role, index) {
+      //   roles.push(role.id)
+      //   // 初始化编辑时候的角色
+      //   const rol = { id: role.id }
+      //   userRoles.push(rol)
+      // })
+      // form.roles = roles
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
@@ -344,27 +326,16 @@ export default {
           type: 'warning'
         })
         return false
-      } else if (!crud.form.job.id) {
-        this.$message({
-          message: '岗位不能为空',
-          type: 'warning'
-        })
-        return false
-      } else if (this.roles.length === 0) {
-        this.$message({
-          message: '角色不能为空',
-          type: 'warning'
-        })
-        return false
       }
-      crud.form.roles = userRoles
       return true
     },
     // 获取左侧部门数据
     getDeptDatas() {
       const sort = 'id,desc'
       const params = { sort: sort }
-      if (this.deptName) { params['name'] = this.deptName }
+      if (this.deptName) {
+        params['name'] = this.deptName
+      }
       getDepts(params).then(res => {
         this.deptDatas = res.content
       })
@@ -391,7 +362,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        crudUser.edit(data).then(res => {
+        crudEmployee.edit(data).then(res => {
           this.crud.notify(this.dict.label.user_status[val] + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
         }).catch(() => {
           data.enabled = !data.enabled
@@ -400,31 +371,43 @@ export default {
         data.enabled = !data.enabled
       })
     },
-    // 获取弹窗内角色数据
-    getRoles() {
-      getAll().then(res => {
-        this.roles = res
-      }).catch(() => { })
-    },
-    // 获取弹窗内岗位数据
-    getJobs(id) {
-      getAllJob(id).then(res => {
-        this.jobs = res.content
-      }).catch(() => { })
-    },
-    // 点击部门搜索对应的岗位
-    selectFun(node, instanceId) {
-      this.getJobs(node.id)
-      this.form.job.id = null
-    },
-    // 获取权限级别
-    getRoleLevel() {
-      getLevel().then(res => {
-        this.level = res.level
-      }).catch(() => { })
-    },
+    // // 获取弹窗内角色数据
+    // getRoles() {
+    //   getAll().then(res => {
+    //     this.roles = res
+    //   }).catch(() => {
+    //   })
+    // },
+    // // 获取弹窗内岗位数据
+    // getJobs(id) {
+    //   getAllJob(id).then(res => {
+    //     this.jobs = res.content
+    //   }).catch(() => {
+    //   })
+    // },
+    // // 点击部门搜索对应的岗位
+    // selectFun(node, instanceId) {
+    //   // this.getJobs(node.id)
+    //   // this.form.job.id = null
+    // },
+    // // 获取权限级别
+    // getRoleLevel() {
+    //   getLevel().then(res => {
+    //     this.level = res.level
+    //   }).catch(() => {
+    //   })
+    // },
     checkboxT(row, rowIndex) {
       return row.id !== this.user.id
+    },
+    // 设置地区属性
+    regionChange(data) {
+      if (data.town !== null) {
+        this.form.address = data.province.value + data.city.value + data.area.value + data.town.value + this.form.address
+        console.log(this.form.address)
+      } else {
+        this.form.address = ''
+      }
     }
   }
 }
