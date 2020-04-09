@@ -73,18 +73,12 @@ public class UserController {
         userService.download(userService.queryAll(criteria), response);
     }
 
-    @AnonymousAccess
-    @ApiOperation("测试查询用户")
-    @GetMapping(value = "/test")
-    public ResponseEntity<Object> getUser(UserQueryCriteria criteria){
-        return new ResponseEntity<>(userService.findByName(criteria.getBlurry()),HttpStatus.OK);
-    }
-
     @Log("查询用户")
     @ApiOperation("查询用户")
     @GetMapping
     @PreAuthorize("@el.check('user:list')")
     public ResponseEntity<Object> getUsers(UserQueryCriteria criteria, Pageable pageable){
+        log.info(JSON.toJSONString(criteria));
         Set<Long> deptSet = new HashSet<>();
         Set<Long> result = new HashSet<>();
         if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
@@ -119,6 +113,7 @@ public class UserController {
     @PostMapping
     @PreAuthorize("@el.check('user:add')")
     public ResponseEntity<Object> create(@Validated @RequestBody User resources){
+        log.info(JSON.toJSONString(resources));
         checkLevel(resources);
         // 默认密码 123456
         resources.setPassword(passwordEncoder.encode("123456"));

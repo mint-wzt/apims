@@ -864,3 +864,28 @@ CREATE TABLE `visits`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '访客记录' ROW_FORMAT = Compact;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+drop table if exists `employee`;
+create table `employee` (
+ `id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+ `number` varchar (255) null default null comment '编号',
+ `name` varchar (255) null default null comment '姓名',
+ `position` varchar (255) null default null comment '职位',
+ `employee_type` varchar (255) null default null comment '员工类型',
+ `dept_id` bigint(20) null default null comment '所属机构ID',
+ `remark` varchar (255) null default null comment '备注',
+ `create_time` datetime null default null comment '创建时间',
+ `contact` varchar (255) null default null comment '联系方式',
+ `id_number` varchar (255) null default null comment '身份证号码',
+ `address` varchar (255) null default null comment '家庭住址',
+ `health_condition` varchar (255) null default null comment '健康情况',
+ `cause_poverty` varchar (255) null default null comment '致贫原因',
+ `responsible_person` varchar (255) null default null comment '帮扶责任人',
+ `education_level`varchar (255) null default null comment '文化程度',
+ `family_situation` varchar (255) null default null comment '家庭情况',
+ `cultivated_area` varchar (255) null default null comment '耕地面积',
+ `object_property` varchar (255) null default null comment '对象属性',
+ `identification_standard` varchar (255) null default null comment '识别标准',
+ INDEX `FK5rwmryny6jthaaxkaaawnknqp`(`dept_id`) USING BTREE,
+ CONSTRAINT `FK5rwmryny6jthaaxkaaawnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;

@@ -93,7 +93,9 @@ public class UserServiceImpl implements UserService {
             throw new EntityExistException(User.class, "email", resources.getEmail());
         }
         resources.setRegion(deptRepository.findById(resources.getDept().getId()).orElseGet(Dept::new).getRegion());
-        return userMapper.toDto(userRepository.save(resources));
+        UserDto userDto = userMapper.toDto(userRepository.save(resources));
+        log.info(JSON.toJSONString(userDto));
+        return userDto;
     }
 
     @Override

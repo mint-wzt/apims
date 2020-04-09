@@ -5,14 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Region;
+import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.repository.RegionRepository;
 import me.zhengjie.modules.system.repository.UserRepository;
 import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
-import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.QueryHelp;
-import me.zhengjie.utils.SecurityUtils;
-import me.zhengjie.utils.ValidationUtil;
+import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
+import me.zhengjie.utils.*;
 import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.mapper.DeptMapper;
@@ -20,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ public class DeptServiceImpl implements DeptService {
 
     private final UserRepository userRepository;
 
-    public DeptServiceImpl(DeptRepository deptRepository, DeptMapper deptMapper, RegionRepository regionRepository,UserRepository userRepository) {
+    public DeptServiceImpl(DeptRepository deptRepository, DeptMapper deptMapper, RegionRepository regionRepository, UserRepository userRepository) {
         this.deptRepository = deptRepository;
         this.deptMapper = deptMapper;
         this.regionRepository = regionRepository;
@@ -61,6 +62,13 @@ public class DeptServiceImpl implements DeptService {
         List<Dept> depts = deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
         log.info(JSON.toJSONString(depts));
         return deptMapper.toDto(depts);
+    }
+
+    @Override
+    @Cacheable
+    public Object queryAll(DeptQueryCriteria criteria, Pageable pageable) {
+        Page<Dept> page = deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        return PageUtil.toPage(page.map(deptMapper::toDto));
     }
 
     @Override
@@ -136,7 +144,7 @@ public class DeptServiceImpl implements DeptService {
             r.setExtName(r.getTownName());
             r.setPid(r.getAreaId());
             regionRepository.save(r);
-        }else {
+        } else {
             // 设置子部门所属区域
             Dept dept = deptRepository.findById(resources.getPid()).get();
             resources.setAddress(dept.getAddress());

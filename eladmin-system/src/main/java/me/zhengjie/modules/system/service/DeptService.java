@@ -3,6 +3,7 @@ package me.zhengjie.modules.system.service;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.DeptQueryCriteria;
+import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,6 +22,13 @@ public interface DeptService {
      * @return /
      */
     List<DeptDto> queryAll(DeptQueryCriteria criteria);
+
+    /**
+     * 分页查询数据
+     * @param criteria 条件
+     * @return /
+     */
+    Object queryAll(DeptQueryCriteria criteria, Pageable pageable);
 
     /**
      * 根据ID查询

@@ -3,6 +3,7 @@ package me.zhengjie.modules.security.rest;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
+import com.alibaba.fastjson.JSON;
 import com.wf.captcha.ArithmeticCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -104,6 +105,7 @@ public class AuthController {
             //踢掉之前已经登录的token
             onlineUserService.checkLoginOnUser(authUser.getUsername(),token);
         }
+        log.info(JSON.toJSONString(authInfo));
         return ResponseEntity.ok(authInfo);
     }
 
