@@ -865,6 +865,7 @@ CREATE TABLE `visits`  (
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+-- 企业员工表
 drop table if exists `employee`;
 create table `employee` (
  `id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
@@ -889,3 +890,21 @@ create table `employee` (
  INDEX `FK5rwmryny6jthaaxkaaawnknqp`(`dept_id`) USING BTREE,
  CONSTRAINT `FK5rwmryny6jthaaxkaaawnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+-- 农产品类别表
+drop table if exists `category`;
+create table `category`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment '分类ID',
+`code` varchar (255) null default null comment '分类代码',
+`name` varchar (255) null default null comment '分类名称',
+`description` varchar (255) null default null comment '描述',
+`pid` bigint(20) null default null comment '父级ID',
+`create_time` datetime  null default null comment '创建时间',
+`create_uid` datetime  null default null comment '创建者ID',
+`update_time` datetime  null default null comment '更新时间',
+`update_uid` datetime  null default null comment '更新者ID'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+
