@@ -157,7 +157,7 @@ import { mapGetters } from 'vuex'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 // crud交由presenter持有
-const defaultCrud = CRUD({ title: '描述项', url: 'api/description', crudMethod: { ...crudDescription }})
+const defaultCrud = CRUD({ title: '基础属性', url: 'api/description', crudMethod: { ...crudDescription }})
 const defaultForm = { id: null, code: null, chineseName: null, englishName: null, mark: null, description: null, datatypeFormat: null, dataRange: null, synonym: null, restrictions: null, unit: null, remark: null, category: { id: null }}
 export default {
   name: 'Description',
@@ -174,6 +174,15 @@ export default {
         del: ['admin', 'description:del']
       },
       rules: {
+        code: [
+          { required: true, message: '请输入基础属性代码', trigger: 'blur' }
+        ],
+        chineseName: [
+          { required: true, message: '请输入属性中文名称', trigger: 'blur' }
+        ],
+        englishName: [
+          { required: true, message: '请输入属性英文名称', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -215,6 +224,13 @@ export default {
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
+      if (!crud.form.category.id) {
+        this.$message({
+          message: '分类不能为空',
+          type: 'warning'
+        })
+        return false
+      }
       return true
     },
     // 获取左侧部门数据
