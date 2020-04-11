@@ -32,7 +32,7 @@
               v-model="query.blurry"
               clearable
               size="small"
-              placeholder="输入名称或者邮箱搜索"
+              placeholder="输入中文名称或编码搜索"
               style="width: 200px;"
               class="filter-item"
               @keyup.enter.native="crud.toQuery"
@@ -123,7 +123,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-permission="['admin','user:edit','user:del']"
+            v-permission="['admin','description:edit','description:del']"
             label="操作"
             width="125"
             align="center"
