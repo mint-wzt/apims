@@ -7,18 +7,13 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
-/**
- * @author Zheng Jie
- * 公共查询类
- */
 @Data
-public class CategoryQueryCriteria implements Serializable {
-    @Query(blurry = "name,code")
+public class DescriptionItemQueryCriteria implements Serializable {
+
+    @Query(blurry = "chineseName,code")
     private String blurry;
 
-    @Query
-    private Integer enabled;
-
+    @Query(propName = "id", joinName = "category")
     private Long categoryId;
 
     @Query(type = Query.Type.BETWEEN)

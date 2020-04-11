@@ -906,5 +906,31 @@ create table `category`(
 `update_uid` datetime  null default null comment '更新者ID'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
 
+-- 农产品基本描述项
+drop table if exists `description_item`;
+create table `description_item`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`code` varchar (255) null default null comment '编码',
+`category_id` bigint(20) null default null comment '所属类型ID',
+`chinese_name` varchar (255) null default null comment '中文名称',
+`english_name` varchar (255) null default null comment '英文名称',
+`mark` varchar (255) null default null comment '标记',
+`description` varchar (255) null default null comment '说明',
+`datatype_format` varchar (255) null default null comment '数据类型及格式',
+`range` varchar (255) null default null comment '值域',
+`synonym` varchar (255) null default null comment '同义词',
+`restrictions` varchar (255) null default null comment '约束/条件',
+`unit` varchar (255) null default null comment '计量单位',
+`remark` varchar (255) null default null comment '备注',
+`create_uid` bigint(20) null default null comment '创建人ID',
+`create_time` datetime null default null comment '创建时间',
+`create_username` varchar (255) null default null comment '创建者用户名',
+`update_uid` bigint(20) null default null comment '修改人ID',
+`update_time` datetime null default null comment '修改时间',
+`update_username` varchar (255) null default null comment '修改者用户名',
+INDEX `FK5xxxryny6jthaaxkaaawnknqp`(`category_id`) USING BTREE,
+ CONSTRAINT `FK5xxxryny6jthaaxkaaawnknqp` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
 
 
