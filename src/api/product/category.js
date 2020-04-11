@@ -8,6 +8,14 @@ export function getCategoryTree(params) {
   })
 }
 
+export function getCategories(params) {
+  return request({
+    url: 'api/category',
+    method: 'get',
+    params
+  })
+}
+
 export function add(data) {
   return request({
     url: 'api/category',
@@ -32,4 +40,4 @@ export function edit(data) {
   })
 }
 
-export default { add, edit, del, getCategoryTree }
+export default { add, edit, del, getCategoryTree, getCategories }

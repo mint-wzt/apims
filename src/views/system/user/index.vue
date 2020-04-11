@@ -377,12 +377,14 @@ export default {
     },
     // 切换部门
     handleNodeClick(data) {
-      if (data.pid === 0) {
-        this.query.deptId = null
-      } else {
-        this.query.deptId = data.id
-      }
+      // if (data.pid === 0) {
+      //   this.query.deptId = null
+      // } else {
+      //   this.query.deptId = data.id
+      // }
+      this.query.deptId = data.id
       this.crud.toQuery()
+      this.query.deptId = null
     },
     // 改变状态
     changeEnabled(data, val) {
