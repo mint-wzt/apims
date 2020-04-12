@@ -237,7 +237,7 @@ export default {
     getDeptDatas() {
       const sort = 'id,desc'
       const params = { sort: sort }
-      if (this.categoryName) { params['name'] = this.categoryName }
+      if (this.categoryName) { params['blurry'] = this.categoryName }
       getCategories(params).then(res => {
         this.categoryDatas = res.content
       })
