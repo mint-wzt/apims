@@ -65,6 +65,7 @@ public class DeptController {
     @PreAuthorize("@el.check('user:list','dept:list')")
     public ResponseEntity<Object> getDepts(DeptQueryCriteria criteria) {
         List<DeptDto> deptDtos = deptService.queryAll(criteria);
+        log.info(JSON.toJSONString(deptDtos));
         Object o = deptService.buildTree(deptDtos);
         log.info(JSON.toJSONString(o));
         return new ResponseEntity<>(o, HttpStatus.OK);

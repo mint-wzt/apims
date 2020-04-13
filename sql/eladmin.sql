@@ -932,5 +932,44 @@ INDEX `FK5xxxryny6jthaaxkaaawnknqp`(`category_id`) USING BTREE,
  CONSTRAINT `FK5xxxryny6jthaaxkaaawnknqp` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
 
+-- 组织机构产品目录
+drop table if exists `product`;
+create table `product`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment '产品ID',
+`name` varchar (255) null default null comment '产品名称',
+`code` varchar (255) null default null comment '产品代码',
+`category_id` bigint(20) null default null comment '分类ID',
+`product_type` varchar (255) null default null comment '类型',
+`scope` varchar (255) null default null comment '使用范围',
+`enabled` int(11) null default null comment '启用',
+`region_id` varchar (255) null default null comment '所属区域ID',
+`dept_id` bigint(20) null default null comment '所属部门ID',
+`remark` varchar (255) null default null comment '备注',
+`create_uid` bigint(20) null default null comment '创建人ID',
+`create_time` datetime null default null comment '创建时间',
+`update_uid` bigint(20) null default null comment '修改者ID',
+`update_time` datetime null default null comment '修改时间',
+INDEX `FK5123ryny6jthaaxkaaawnknqp`(`category_id`) USING BTREE,
+INDEX `FK5234ryny6jthaaxkaaawnknqp`(`region_id`) USING BTREE,
+INDEX `FK5235ryny6jthaaxkaaawnknqp`(`dept_id`) USING BTREE,
+CONSTRAINT `FK5123ryny6jthaaxkaaawnknqp` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FK5234ryny6jthaaxkaaawnknqp` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FK5235ryny6jthaaxkaaawnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+-- 农产品产品生产描述表
+
+
+-- 农产品生产信息管理
+drop table if exists `product_data`;
+create table `product_data`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment '产品ID',
+`category_id` bigint(20) null default null comment '产品分类ID',
+`product_code` varchar (255) null default null comment '产品编码',
+`product_name` varchar (255) null default null comment '产品名称',
+``
+)
+
 
 

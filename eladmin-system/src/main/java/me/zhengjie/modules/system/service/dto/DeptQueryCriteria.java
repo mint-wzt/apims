@@ -24,6 +24,9 @@ public class DeptQueryCriteria{
     private Boolean enabled;
 
     @Query
+    private Integer deptType;
+
+    @Query
     private Long pid;
 
     @Query(type = Query.Type.BETWEEN)
