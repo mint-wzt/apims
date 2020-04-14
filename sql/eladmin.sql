@@ -958,6 +958,99 @@ CONSTRAINT `FK5235ryny6jthaaxkaaawnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dep
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
 
 
+-- 检测项基础属性库
+drop table if exists `inspection_item`;
+create table `inspection_item`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`code` varchar (255) null default null comment '编码',
+`name` varchar (255) null default null comment '名称',
+`unit` varchar (255) null default null comment '单位',
+`compare_direction` varchar (255) null default null comment '比较方向',
+`checkout_type` varchar (255) null default null comment '检出类型',
+`lower_limit` decimal (16,3) null default null comment '参考下限',
+`lower_limit_comparator` varchar (255) null default null comment '下限比较符',
+`upper_limit` decimal (16,3) null default null comment '参考上限',
+`upper_limit_comparator` varchar (255) null default null comment '上限比较符',
+`reference_value1` varchar (255) null default null comment '参考值1',
+`reference_value2` varchar (255) null default null comment '参考值2',
+`reference_value3` varchar (255) null default null comment '参考值3',
+`classification_code` varchar (255) null default null comment '分类代码',
+`classification_name` varchar (255) null default null comment '分类名称',
+`version` varchar (255) null default null comment '版本号',
+`backup1` varchar (255) null default null comment '备用1',
+`backup2` varchar (255) null default null comment '备用2',
+`backup3` varchar (255) null default null comment '备用3',
+`backup4` varchar (255) null default null comment '备用4',
+`backup5` varchar (255) null default null comment '备用5',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 检测模板表
+drop table if exists `inspection_template`;
+create table `inspection_template`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`name` varchar (255) null default null comment '模板名称',
+`it_type` varchar (255) null default null comment '类别',
+`scope` varchar (255) null default null comment '使用范围',
+`user_id` bigint(20) null default null comment '使用者ID',
+`product_id` bigint(20) null default null comment '产品ID',
+`enabled` int(11) null default null comment '是否启用',
+`remark` varchar (255) null default null comment '备注',
+`create_time` datetime null default null comment '创建时间',
+INDEX `FKsfjkryny6jthaaxkaaawnknqp`(`user_id`) USING BTREE,
+INDEX `FKimefryny6jthaaxkaaawnknqp`(`product_id`) USING BTREE,
+CONSTRAINT `FKimefryny6jthaaxkaaawnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FKsfjkryny6jthaaxkaaawnknqp` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 检测模板与项目关联表
+drop table if exists `inspection_template_item`;
+create table `inspection_template_item`(
+`inspection_template_id` bigint(20) not null comment '检测模板ID',
+`inspection_item_id` bigint(20) not null comment '检测项目ID',
+PRIMARY KEY (`inspection_template_id`, `inspection_item_id`) USING BTREE,
+CONSTRAINT `FKgd3iendsyyh04b95ykqise6qh` FOREIGN KEY (`inspection_template_id`) REFERENCES `inspection_template` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FKt4v0rrreyk393bdgt107vdx0x` FOREIGN KEY (`inspection_item_id`) REFERENCES `inspection_item` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+-- 产品检测记录表
+drop table if exists `inspection_record`;
+create table `inspection_record`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`code` varchar (255) null default null comment '编号',
+`batch_number` varchar (255) null default null comment '检测批次',
+`inspector` varchar (255) null default null comment '检测员',
+`inspect_time` datetime null default null comment '检测日期',
+`is_passed` int(11) null default null comment '是否通过',
+`product_id` bigint(20) null default null comment '产品ID',
+`dept_id` bigint(20) null default null comment '所属机构ID',
+`is_submit` int(11) null default null comment '是否提交',
+`remark` varchar (255) null default null comment '备注',
+`create_time` datetime null default null comment '创建时间',
+INDEX `FKimefryny6jththykaaawnknqp`(`product_id`) USING BTREE,
+INDEX `FKimefryny6jthedikaaawnknqp`(`dept_id`) USING BTREE,
+CONSTRAINT `FKimefryny6jththykaaawnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FKimefryny6jthedikaaawnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+-- 产品检测记录与模板关联表
+-- #没有添加外键约束#
+drop table if exists `inspection_record_template`;
+create table `inspection_record_template`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`inspection_record_id` bigint(20) null default null comment '检测记录ID',
+`inspection_template_id` bigint(20) null default null comment '检测模板ID',
+`inspection_template_name` varchar (255) null default null comment '模板名称',
+`inspection_item_id` bigint(20) null default null comment '检测项目ID',
+`inspection_item_name` varchar (255) null default null comment '检测项目名称',
+`is_detected` int(11) null default null comment '是否检出',
+`is_exceeded` int(11) null default null comment '是否超标',
+`inspect_method` varchar (255) null default null comment '检测方法'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
 -- 农产品产品生产描述表
 
 

@@ -43,8 +43,11 @@ public class DescriptionItemServiceImpl implements DescriptionItemService {
     private DescriptionItemMapper descriptionItemMapper;
 
     @Override
+    @Cacheable
     public DescriptionItemDto findById(long id) {
-        return null;
+        DescriptionItem item = descriptionItemRepository.findById(id).orElseGet(DescriptionItem::new);
+        ValidationUtil.isNull(item.getId(),"description","id",id);
+        return descriptionItemMapper.toDto(item);
     }
 
     @Override
@@ -68,7 +71,7 @@ public class DescriptionItemServiceImpl implements DescriptionItemService {
         DescriptionItem descriptionItem1 = descriptionItemRepository.findByCode(resources.getCode());
 
         // 编码重复
-        if (descriptionItem1 != null && !descriptionItem.getCode().equals(descriptionItem1.getCode())) {
+        if (descriptionItem1 != null && !descriptionItem.getId().equals(descriptionItem1.getId())) {
             throw new EntityExistException(DescriptionItem.class, "code", resources.getCode());
         }
 

@@ -52,7 +52,7 @@ public class DescriptionItemController {
     @ApiOperation("查询描述项")
     @GetMapping
     @PreAuthorize("@el.check('description:list')")
-    public ResponseEntity<Object> getUsers(DescriptionItemQueryCriteria criteria, Pageable pageable) {
+    public ResponseEntity<Object> getDescriptionItems(DescriptionItemQueryCriteria criteria, Pageable pageable) {
         log.info(JSON.toJSONString(criteria));
         return new ResponseEntity<>(itemService.queryAll(criteria, pageable), HttpStatus.OK);
     }
