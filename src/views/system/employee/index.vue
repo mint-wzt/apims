@@ -308,13 +308,13 @@ export default {
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
       // this.getJobs(this.form.dept.id)
-      // userRoles = []
+      // selectedInspections = []
       // const roles = []
       // form.roles.forEach(function(role, index) {
       //   roles.push(role.id)
       //   // 初始化编辑时候的角色
       //   const rol = { id: role.id }
-      //   userRoles.push(rol)
+      //   selectedInspections.push(rol)
       // })
       // form.roles = roles
     },

@@ -75,7 +75,7 @@
               <el-input v-model="form.username" />
             </el-form-item>
             <el-form-item label="电话" prop="phone">
-              <el-input v-model.number="form.phone" />
+              <el-input v-model="form.phone" />
             </el-form-item>
             <el-form-item label="姓名" prop="name">
               <el-input v-model="form.name" />

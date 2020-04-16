@@ -83,8 +83,8 @@
             </el-form-item>
             <el-form-item label="状态" prop="enabled">
               <el-radio-group v-model="form.enabled">
-                <el-radio label="1">启用</el-radio>
-                <el-radio label="0">停用</el-radio>
+                <el-radio :label="1">启用</el-radio>
+                <el-radio :label="0">停用</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="描述信息" prop="remark">

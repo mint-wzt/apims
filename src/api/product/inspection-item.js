@@ -24,4 +24,14 @@ export function edit(data) {
   })
 }
 
+/**
+ * 获取所有的检测项
+ */
+export function getAllInspections() {
+  return request({
+    url: 'api/inspection-item/all',
+    method: 'get'
+  })
+}
+
 export default { add, edit, del }
