@@ -41,6 +41,13 @@ public interface InspectionItemService {
     void delete(Set<Long> ids);
 
     /**
+     * 获取所有检测项
+     * @param pageable
+     * @return
+     */
+    Object queryAll(Pageable pageable);
+
+    /**
      * 查询全部
      * @param criteria 条件
      * @param pageable 分页参数

@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -71,5 +71,23 @@ public class InspectionTemplate implements Serializable {
     private Timestamp createTime;
 
     public @interface Update {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        InspectionTemplate template = (InspectionTemplate) o;
+        return Objects.equals(id, template.id) &&
+                Objects.equals(name, template.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 
 }

@@ -59,6 +59,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 Optional.ofNullable(user.getDept()).map(DeptSmallDto::getName).orElse(null),
                 Optional.ofNullable(user.getJob()).map(JobSmallDto::getName).orElse(null),
                 Optional.ofNullable(user.getRegion()).map(RegionSmallDto::getExtName).orElse(null),
+                user.getDept().getId(),
                 roleService.mapToGrantedAuthorities(user),
                 user.getEnabled(),
                 user.getCreateTime(),

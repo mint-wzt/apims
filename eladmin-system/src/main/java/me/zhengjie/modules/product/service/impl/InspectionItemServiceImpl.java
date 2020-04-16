@@ -116,6 +116,12 @@ public class InspectionItemServiceImpl implements InspectionItemService {
 
     @Override
     @Cacheable
+    public Object queryAll(Pageable pageable) {
+        return inspectionItemMapper.toDto(inspectionItemRepository.findAll(pageable).getContent());
+    }
+
+    @Override
+    @Cacheable
     public Object queryAll(InspectionItemQueryCriteria criteria, Pageable pageable) {
         Page<InspectionItem> page = inspectionItemRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
         return PageUtil.toPage(page.map(inspectionItemMapper::toDto));

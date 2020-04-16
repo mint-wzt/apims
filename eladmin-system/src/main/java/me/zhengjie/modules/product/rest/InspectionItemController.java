@@ -10,6 +10,8 @@ import me.zhengjie.modules.product.service.InspectionItemService;
 import me.zhengjie.modules.product.service.dto.InspectionItemQueryCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +37,13 @@ public class InspectionItemController {
     @PreAuthorize("@el.check('inspection-item:list')")
     public void download(HttpServletResponse response, InspectionItemQueryCriteria criteria) throws IOException {
         itemService.download(itemService.queryAll(criteria), response);
+    }
+
+    @ApiOperation("返回全部的检测项")
+    @GetMapping(value = "/all")
+    @PreAuthorize("@el.check('inspection-item:list','inspection-template:add','inspection-template:edit')")
+    public ResponseEntity<Object> getAll(@PageableDefault(value = 2000, sort = {"id"}, direction = Sort.Direction.ASC) Pageable pageable){
+        return new ResponseEntity<>(itemService.queryAll(pageable),HttpStatus.OK);
     }
 
     @Log("查询检测项")

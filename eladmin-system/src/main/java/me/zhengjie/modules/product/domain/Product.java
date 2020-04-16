@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * (Product)实体类
@@ -89,4 +90,22 @@ public class Product implements Serializable {
     private Timestamp updateTime;
 
     public @interface Update {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Product template = (Product) o;
+        return Objects.equals(id, template.id) &&
+                Objects.equals(code, template.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, code);
+    }
 }
