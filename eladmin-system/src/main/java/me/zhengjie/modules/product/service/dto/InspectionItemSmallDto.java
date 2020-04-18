@@ -18,4 +18,14 @@ public class InspectionItemSmallDto implements Serializable {
      * 名称
      */
     private String name;
+
+    /**
+     * 检测项对应的值
+     */
+    private Double itemValue;
+
+    /**
+     * 单位
+     */
+    private String unit;
 }

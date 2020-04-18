@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * (InspectionRecordTemplate)实体类
@@ -59,5 +60,23 @@ public class InspectionRecordTemplate implements Serializable {
     private String inspectMethod;
 
     public @interface Update {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        InspectionRecordTemplate record = (InspectionRecordTemplate) o;
+        return Objects.equals(id, record.id) &&
+                Objects.equals(inspectionRecordId, record.inspectionRecordId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, inspectionRecordId);
+    }
 
 }

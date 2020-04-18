@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * (InspectionRecord)实体类
@@ -42,7 +43,7 @@ public class InspectionRecord implements Serializable {
     /**
     * 检测日期
     */
-    private Date inspectTime;
+    private Timestamp inspectTime;
     /**
     * 是否通过
     */
@@ -74,5 +75,23 @@ public class InspectionRecord implements Serializable {
     private Timestamp createTime;
 
     public @interface Update {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        InspectionRecord record = (InspectionRecord) o;
+        return Objects.equals(id, record.id) &&
+                Objects.equals(code, record.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, code);
+    }
 
 }
