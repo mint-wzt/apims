@@ -110,7 +110,7 @@ public class ProductController {
     @ApiOperation("修改产品")
     @PutMapping
     @PreAuthorize("@el.check('product:edit')")
-    public ResponseEntity<Object> update(@Validated(User.Update.class) @RequestBody Product resources){
+    public ResponseEntity<Object> update(@Validated(Product.Update.class) @RequestBody Product resources){
 //        checkLevel(resources);
         productService.update(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -143,17 +143,4 @@ public class ProductController {
         productService.delete(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-//
-//    /**
-//     * 如果当前用户的角色级别低于创建用户的角色级别，则抛出权限不足的错误
-//     * @param resources /
-//     */
-//    private void checkLevel(User resources) {
-//        UserDto user = userService.findByName(SecurityUtils.getUsername());
-//        Integer currentLevel =  Collections.min(roleService.findByUsersId(user.getId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-//        Integer optLevel = roleService.findByRoles(resources.getRoles());
-//        if (currentLevel > optLevel) {
-//            throw new BadRequestException("角色权限不足");
-//        }
-//    }
 }

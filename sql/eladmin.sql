@@ -1050,19 +1050,51 @@ create table `inspection_record_template`(
 `inspect_method` varchar (255) null default null comment '检测方法'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
 
+-- 产品采购记录表
+drop table if exists `purchase_record`;
+create table `purchase_record`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`product_id` bigint(20) null default null comment '产品ID',
+`product_name` varchar (255) null default null comment '产品名称',
+`batch_number` varchar (255) null default null comment '采购批次',
+`purchase_quantity` decimal (16,0) null default null comment '采购数量',
+`unit` varchar (255) null default null comment '计数单位',
+`goods_name` varchar (255) null default null comment '原材料名称',
+`producer_name` varchar (255) null default null comment '生产者名称',
+`producer_address` varchar (255) null default null comment '生产者地址',
+`producer_contact` varchar (255) null default null comment '生产者联系方式',
+`purchase_time` datetime null default null comment '采购时间',
+`dept_id` bigint(20) null default null comment '所属组织机构',
+`record_status` int (11) null default null comment '状态',
+`remark` varchar (255) null default null comment '备注',
+`create_time` datetime null default null comment '创建时间',
+INDEX `FKimefryny6jththyk123wnknqp`(`product_id`) USING BTREE,
+INDEX `FKimefryny6jthedik321wnknqp`(`dept_id`) USING BTREE,
+CONSTRAINT `FKimefryny6jththyk123wnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FKimefryny6jthedik321wnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
 
--- 农产品产品生产描述表
-
-
--- 农产品生产信息管理
+-- 产品生产数据表
 drop table if exists `product_data`;
 create table `product_data`(
-`id` bigint(20) not null primary key AUTO_INCREMENT comment '产品ID',
-`category_id` bigint(20) null default null comment '产品分类ID',
-`product_code` varchar (255) null default null comment '产品编码',
-`product_name` varchar (255) null default null comment '产品名称',
-``
-)
-
-
-
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`product_id` bigint(20) null default null comment '产品ID',
+`batch_number` varchar (255) null default null comment '生产批次',
+`material_batch` varchar (255) null default null comment '原料批次',
+`manufacture_date` datetime null default null comment '生产日期',
+`area` decimal (16,0) null default null comment '种植面积',
+`area_unit` varchar (255) null default null comment '面积单位',
+`count` decimal (16,0) null default null comment '养殖数量',
+`count_unit` varchar (255) null default null comment '数量单位',
+`output` decimal (16,0) null default null comment '产量',
+`output_unit` varchar (255) null default null comment '产量单位',
+`data_status` int(11) null default null comment '状态',
+`dept_id` bigint(20) null default null comment '所属组织机构',
+`product_type` varchar (255) null default null comment '产品类型',
+`remark` varchar (255) null default null comment '备注',
+`create_time` datetime null default null comment '创建时间',
+INDEX `FKimefryny6jththykiurwnknqp`(`product_id`) USING BTREE,
+INDEX `FKimefryny6jthedikslgwnknqp`(`dept_id`) USING BTREE,
+CONSTRAINT `FKimefryny6jththykiurwnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FKimefryny6jthedikslgwnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
