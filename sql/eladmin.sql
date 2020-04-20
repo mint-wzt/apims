@@ -1079,6 +1079,7 @@ drop table if exists `product_data`;
 create table `product_data`(
 `id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
 `product_id` bigint(20) null default null comment '产品ID',
+`product_name` varchar (255) null default null comment '产品名称',
 `batch_number` varchar (255) null default null comment '生产批次',
 `material_batch` varchar (255) null default null comment '原料批次',
 `manufacture_date` datetime null default null comment '生产日期',
@@ -1090,8 +1091,10 @@ create table `product_data`(
 `output_unit` varchar (255) null default null comment '产量单位',
 `data_status` int(11) null default null comment '状态',
 `dept_id` bigint(20) null default null comment '所属组织机构',
+`dept_name` varchar (255) null default null comment '组织机构名称',
 `product_type` varchar (255) null default null comment '产品类型',
 `remark` varchar (255) null default null comment '备注',
+`pid` bigint(20) null default null comment '父级ID',
 `create_time` datetime null default null comment '创建时间',
 INDEX `FKimefryny6jththykiurwnknqp`(`product_id`) USING BTREE,
 INDEX `FKimefryny6jthedikslgwnknqp`(`dept_id`) USING BTREE,

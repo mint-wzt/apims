@@ -214,10 +214,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 设置父类
+     *
      * @param categoryDtos
      */
     @Override
-    public void setParentCategory(List<CategoryDto> categoryDtos){
+    public void setParentCategory(List<CategoryDto> categoryDtos) {
         for (CategoryDto categoryDto : categoryDtos) {
             if (categoryDto.getPid() == 0) {
                 categoryDto.setParent(null);

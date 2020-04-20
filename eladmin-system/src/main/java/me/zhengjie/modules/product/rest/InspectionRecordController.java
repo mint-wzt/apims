@@ -55,7 +55,7 @@ public class InspectionRecordController {
     @ApiOperation("查询检测记录")
     @GetMapping
     @PreAuthorize("@el.check('products-detection:list')")
-    public ResponseEntity<Object> getUsers(InspectionRecordQueryCriteria criteria, Pageable pageable){
+    public ResponseEntity<Object> getProductRecord(InspectionRecordQueryCriteria criteria, Pageable pageable){
         log.info(JSON.toJSONString(criteria));
         Set<Long> deptSet = new HashSet<>();
         Set<Long> result = new HashSet<>();
