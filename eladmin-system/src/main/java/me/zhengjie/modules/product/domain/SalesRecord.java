@@ -9,24 +9,73 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 /**
- * (ProductData)实体类
+ * (SalesRecord)实体类
  *
  * @author makejava
- * @since 2020-04-18 17:19:22
+ * @since 2020-04-21 20:03:36
  */
 @Data
 @Entity
-public class ProductData implements Serializable {
+public class SalesRecord implements Serializable {
     /**
     * ID
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(groups = ProductData.Update.class)
+    @NotNull(groups = SalesRecord.Update.class)
     private Long id;
+    /**
+    * 订单号
+    */
+    private String orderNumber;
+    /**
+    * 销售区域ID
+    */
+    private String regionId;
+    /**
+    * 销售区域
+    */
+    @NotBlank
+    private String salesArea;
+    /**
+    * 生产批次
+    */
+    @NotBlank
+    private String batchNumber;
+    /**
+    * 销量
+    */
+    @NotNull
+    private Double salesNumber;
+    /**
+    * 计量单位
+    */
+    @NotBlank
+    private String salesUnit;
+    /**
+    * 单价
+    */
+    @NotNull
+    private Double price;
+    /**
+    * 价格单位
+    */
+    @NotBlank
+    private String priceUnit;
+    /**
+    * 销售额
+    */
+    @NotNull
+    private Double sales;
+    /**
+    * 销售日期
+    */
+    @NotNull
+    private Timestamp salesDate;
     /**
     * 产品ID
     */
@@ -34,71 +83,27 @@ public class ProductData implements Serializable {
     @JoinColumn(name = "product_id")
     private Product product;
     /**
-     * 产品名称
-     */
-    @NotBlank
+    * 产品编码
+    */
+    private String productCode;
+    /**
+    * 产品名称
+    */
     private String productName;
     /**
-    * 生产批次
-    */
-    private String batchNumber;
-
-    /**
-     * 父级ID
-     */
-    private Long pid;
-
-    /**
-    * 原料批次
-    */
-    private String materialBatch;
-    /**
-    * 生产日期
-    */
-    @NotNull
-    private Timestamp manufactureDate;
-    /**
-    * 种植面积
-    */
-    private Double area;
-    /**
-    * 面积单位
-    */
-    private String areaUnit;
-    /**
-    * 养殖数量
-    */
-    private Double count;
-    /**
-    * 数量单位
-    */
-    private String countUnit;
-    /**
-    * 产量
-    */
-    private Double output;
-    /**
-    * 产量单位
-    */
-    private String outputUnit;
-    /**
-    * 状态
-    */
-    private Integer dataStatus;
-    /**
-    * 所属组织机构
+    * 部门ID
     */
     @OneToOne
     @JoinColumn(name = "dept_id")
     private Dept dept;
     /**
-     * 组织机构名称
-     */
+    * 部门名称
+    */
     private String deptName;
     /**
-    * 产品类型
+    * 状态
     */
-    private String productType;
+    private Integer salesStatus;
     /**
     * 备注
     */
@@ -119,13 +124,13 @@ public class ProductData implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ProductData productData = (ProductData) o;
-        return Objects.equals(id, productData.id) &&
-                Objects.equals(productName, productData.productName);
+        SalesRecord salesRecord = (SalesRecord) o;
+        return Objects.equals(id, salesRecord.id) &&
+                Objects.equals(orderNumber, salesRecord.orderNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName);
+        return Objects.hash(id, orderNumber);
     }
 }

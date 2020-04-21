@@ -49,7 +49,7 @@ public interface ProductDataService {
 
     /**
      * 删除生产数据
-     * @param ids /
+     * @param categoriesSet /
      */
     void delete(Set<ProductData> categoriesSet);
 

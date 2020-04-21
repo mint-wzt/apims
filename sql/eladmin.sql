@@ -1101,3 +1101,31 @@ INDEX `FKimefryny6jthedikslgwnknqp`(`dept_id`) USING BTREE,
 CONSTRAINT `FKimefryny6jththykiurwnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
 CONSTRAINT `FKimefryny6jthedikslgwnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 产品销售数据表
+drop table if exists `sales_record`;
+create table `sales_record`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`order_number` varchar (255) null default null comment '订单号',
+`region_id` varchar (255) null default null comment '销售区域ID',
+`sales_area` varchar (255) null default null comment '销售区域',
+`batch_number` varchar (255) null default null comment '生产批次',
+`sales_number` decimal(16,0) null default null comment '销量',
+`sales_unit` varchar (255) null default null comment '计量单位',
+`price` decimal (16,2) null default null comment '单价',
+`price_unit` varchar (255) null default null comment '价格单位',
+`sales` decimal null default null comment '销售额',
+`sales_date` datetime null default null comment '销售日期',
+`product_id` bigint(20) null default null comment '产品ID',
+`product_code` varchar (255) null default null comment '产品编码',
+`product_name` varchar (255) null default null comment '产品名称',
+`dept_id` bigint(20) null default null comment '部门ID',
+`dept_name` varchar (255) null default null comment '部门名称',
+`sales_status` int(11) null default null comment '状态',
+`remark` varchar (255) null default null comment '备注',
+`create_time` datetime null default null comment '创建时间',
+INDEX `FKimefryny6jsyzjykiurwnknqp`(`product_id`) USING BTREE,
+INDEX `FKimefryny6juijlikslgwnknqp`(`dept_id`) USING BTREE,
+CONSTRAINT `FKimefryny6jsyzjykiurwnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+CONSTRAINT `FKimefryny6juijlikslgwnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
