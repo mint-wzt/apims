@@ -55,7 +55,7 @@
         <!--表单渲染-->
         <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="630px">
           <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="80px">
-            <el-form-item label="菜单类型" prop="type">
+            <el-form-item label="信息类型" prop="type">
               <el-radio-group v-model="form.dataStatus" size="small" style="width: 178px">
                 <el-radio-button :label="0" @change="getStatus">产品信息</el-radio-button>
                 <el-radio-button :label="1" @change="getStatus">生产信息</el-radio-button>
