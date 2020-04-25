@@ -43,7 +43,7 @@ public class Employee implements Serializable {
     /**
      * 所属机构ID
      */
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "dept_id")
     private Dept dept;
     /**

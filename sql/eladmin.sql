@@ -1178,3 +1178,37 @@ create table `sys_set_up`(
 `sys_status` int(11) null default null comment '状态',
 `create_time` datetime null default null comment '创建日期'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+-- 帮扶酬金发放表
+drop table if exists `remuneration_payment`;
+create table `remuneration_payment`(
+`id` bigint(20) not null  primary key AUTO_INCREMENT comment 'ID',
+`name` varchar (255) null default null comment '名称',
+`distributor` varchar (255) null default null comment '发放人',
+`payment_reason` varchar (255) null default null comment '发放事由',
+`payment_time` datetime null default null comment '发放时间',
+`payment_total` decimal (16,2) null default null comment '发放总额',
+`region_id` varchar (255) null default null comment '行政区域ID',
+`region_name` varchar (255) null default null comment '行政区域名称',
+`dept_id` bigint(20) null default null comment '所属机构ID',
+`dept_name` varchar (255) null default null comment '所属机构名称',
+`remark` varchar (255) null default null comment '备注',
+`create_time` datetime null default null comment '创建时间',
+INDEX `FKimefryny6juijlikslgjjjnqp`(`dept_id`) USING BTREE,
+CONSTRAINT `FKimefryny6juijlikslgjjjnqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+
+-- 发放酬金子表
+drop table if exists `payment_employee`;
+create table `payment_employee`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`payment_id` bigint(20) null default null comment '发放酬金表ID',
+`payment_name` varchar (255) null default null comment '酬金表名',
+`employee_name` varchar (255) null default null comment '员工姓名',
+`payment_amount` decimal (16,0) null default null comment '发放酬金',
+`payment_time` datetime null default null comment '发放日期',
+INDEX `FKimefryny6juijlikslgiiinqp`(`payment_id`) USING BTREE,
+CONSTRAINT `FKimefryny6juijlikslgiiinqp` FOREIGN KEY (`payment_id`) REFERENCES `remuneration_payment` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;

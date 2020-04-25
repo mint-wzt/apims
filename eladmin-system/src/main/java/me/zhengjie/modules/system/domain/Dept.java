@@ -77,6 +77,9 @@ public class Dept implements Serializable {
     @UpdateTimestamp
     private Timestamp updateTime;
 
+    @OneToMany(mappedBy = "dept")
+    private Set<Employee> employees;
+
     public @interface Update {}
 
     @Override
