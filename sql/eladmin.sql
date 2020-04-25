@@ -1150,7 +1150,7 @@ create table `industry_statistics`(
 -- 产品分布统计数据
 drop table if exists `product_statistics`;
 create table `product_statistics`(
-`id` bigint(20) not null primary key comment 'ID',
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
 `region_id` varchar (255) null default null comment '行政编码',
 `region_name` varchar (255) null default null comment '行政名称',
 `product_code` varchar (255) null default null comment '产品编码',
@@ -1161,4 +1161,20 @@ create table `product_statistics`(
 `create_uid` bigint(20) null default null comment '统计人ID',
 `create_username` varchar (255) null default null comment '统计人',
 `statistics_time` datetime null default null comment '统计时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 系统设置
+drop table if exists `sys_set_up`;
+create table `sys_set_up`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'Id',
+`system_name` varchar (255) null default null comment '系统名称',
+`system_logo` varchar (255) null default null comment '系统头像',
+`region` varchar (255) null default null comment '区域',
+`copyright` varchar (255) null default null comment '版权',
+`case_number` varchar (255) null default null comment '备案号',
+`enterprise` varchar (255) null default null comment '所属企业',
+`owner` varchar (255) null default null comment '拥有者',
+`description` varchar (255) null default null comment '描述',
+`sys_status` int(11) null default null comment '状态',
+`create_time` datetime null default null comment '创建日期'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
