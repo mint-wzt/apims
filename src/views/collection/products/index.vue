@@ -71,6 +71,7 @@
                 :props="defaultProps"
                 style="width: 178px"
                 placeholder="选择分类"
+                @select="selectFun"
               />
             </el-form-item>
             <el-form-item label="生产商" prop="dept.id">
@@ -82,10 +83,8 @@
               />
             </el-form-item>
             <el-form-item label="状态" prop="enabled">
-              <el-radio-group v-model="form.enabled">
-                <el-radio :label="1">启用</el-radio>
-                <el-radio :label="0">停用</el-radio>
-              </el-radio-group>
+              <el-radio v-model="form.enabled" label="1">启用</el-radio>
+              <el-radio v-model="form.enabled" label="0">停用</el-radio>
             </el-form-item>
             <el-form-item label="描述信息" prop="remark">
               <el-input v-model="form.remark" style="width: 430px;" rows="5" type="textarea" />
@@ -187,8 +186,7 @@ export default {
       ],
       rules: {
         name: [
-          { required: true, message: '请输入产品名称', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          { required: true, message: '请输入产品名称', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入产品编码', trigger: 'blur' }
@@ -344,6 +342,11 @@ export default {
       getLevel().then(res => {
         this.level = res.level
       }).catch(() => { })
+    },
+    // 点击部门搜索对应的岗位
+    selectFun(node, instanceId) {
+      this.form.productType = node.label
+      console.log(this.form.productType)
     }
   }
 }

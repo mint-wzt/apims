@@ -114,11 +114,15 @@
               <el-input v-model="form.outputUnit" placeholder="请输入产量单位" />
             </el-form-item>
             <el-form-item v-show="form.dataStatus.toString() === '0'" label="行业" prop="productType">
-              <el-input v-model="form.productType" placeholder="请选择行业" />
+              <el-select v-model="form.productType" style="width: 450px" placeholder="请选择行业" @change="getIndustry">
+                <el-option
+                  v-for="(item, index) in industries"
+                  :key="'industry-' + index"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
             </el-form-item>
-            <!--            <el-form-item label="描述信息" prop="remark">-->
-            <!--              <el-input v-model="form.remark" style="width: 430px;" rows="5" type="textarea" />-->
-            <!--            </el-form-item>-->
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -210,7 +214,21 @@ export default {
         outputUnit: [
           { required: true, message: '请输入计数单位', trigger: 'blur' }
         ]
-      }
+      },
+      industries: [
+        {
+          id: 1,
+          name: '种植业'
+        },
+        {
+          id: 2,
+          name: '畜牧业'
+        },
+        {
+          id: 3,
+          name: '渔业'
+        }
+      ]
     }
   },
   computed: {
@@ -317,6 +335,9 @@ export default {
         return item.id === val
       })
       this.form.productName = obj.name
+    },
+    getIndustry(value) {
+
     },
     getStatus() {
       if (this.form.dataStatus === 0) {

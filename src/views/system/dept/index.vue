@@ -26,9 +26,11 @@
     <!--表单组件-->
     <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="500px">
       <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-        <el-form-item label="新增" prop="type">
-          <el-radio v-model="type" label="0" @change="chooseChange">行政部门</el-radio>
-          <el-radio v-model="type" label="1" @change="chooseChange">组织机构</el-radio>
+        <el-form-item label="类型" prop="type">
+          <el-radio-group v-model="form.deptType" size="small" style="width: 178px">
+            <el-radio-button :label="0">行政单位</el-radio-button>
+            <el-radio-button :label="1">组织机构</el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" style="width: 370px;" />
@@ -52,8 +54,8 @@
       </div>
     </el-dialog>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :lazy="true" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" default-expand-all :data="crud.data" row-key="id" @select="crud.selectChange" @select-all="crud.selectAllChange" @selection-change="crud.selectionChangeHandler">
-      <el-table-column :selectable="checkboxT" type="selection" width="55" />
+    <el-table ref="table" v-loading="crud.loading" :data="crud.data" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id" @select="crud.selectChange" @select-all="crud.selectAllChange" @selection-change="crud.selectionChangeHandler">
+      <el-table-column type="selection" width="55" />
       <el-table-column v-if="columns.visible('name')" label="名称" prop="name" />
       <el-table-column v-if="columns.visible('address')" label="所在地区" prop="address" />
       <el-table-column
@@ -72,7 +74,6 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.enabled"
-            :disabled="scope.row.id === 1"
             active-color="#409EFF"
             inactive-color="#F56C6C"
             @change="changeEnabled(scope.row, scope.row.enabled,)"
@@ -89,7 +90,6 @@
           <udOperation
             :data="scope.row"
             :permission="permission"
-            :disabled-dle="scope.row.id === 1"
             msg="确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！"
           />
         </template>
@@ -185,9 +185,6 @@ export default {
         data.enabled = !data.enabled
       })
     },
-    checkboxT(row, rowIndex) {
-      return row.id !== 1
-    },
     // 设置地区属性
     regionChange(data) {
       if (data.town !== null) {
@@ -200,16 +197,15 @@ export default {
         this.form.region.areaName = data.area.value
         this.form.region.townId = data.town.key
         this.form.region.townName = data.town.value
+        this.form.region.pid = data.area.key
+        this.form.region.name = data.town.value
+        this.form.region.extName = data.town.value
         this.form.address = data.province.value + data.city.value + data.area.value + data.town.value + this.form.address
         console.log(JSON.stringify(this.form.region))
         console.log(this.form.address)
       } else {
         this.form.address = ''
       }
-    },
-    chooseChange() {
-      this.form.deptType = this.type
-      console.log(this.form.deptType)
     },
     typeTranslate(type) {
       return type === 0 ? '行政单位' : '组织机构'

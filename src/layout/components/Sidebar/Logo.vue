@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      title: '农产品基础数据库系统',
+      title: this.$store.state.settings.title,
       logo: Logo
     }
   }

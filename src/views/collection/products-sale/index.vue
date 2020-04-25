@@ -255,6 +255,7 @@ export default {
       this.form.deptName = this.user.dept
       // 获取产品
       this.getProducts(this.user.deptId)
+      this.form.orderNumber = this.randomOrder()
     },
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
@@ -324,6 +325,14 @@ export default {
       } else {
         this.form.pid = 1
       }
+    },
+    randomOrder() {
+      var random_no = 'JX'
+      for (var i = 0; i < 3; i++) {
+        random_no += Math.floor(Math.random() * 10)
+      }
+      random_no = random_no + new Date().getTime()
+      return random_no
     },
     // 改变状态
     changeEnabled(data, val) {

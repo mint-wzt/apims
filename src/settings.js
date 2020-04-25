@@ -2,7 +2,7 @@ module.exports = {
   /**
    * @description 网站标题
    */
-  title: '农产品基础数据库系统',
+  title: 'Agriculture-System',
   /**
    * @description 是否显示 tagsView
    */
