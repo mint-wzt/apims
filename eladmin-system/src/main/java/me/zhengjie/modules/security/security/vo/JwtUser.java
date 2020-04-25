@@ -46,6 +46,8 @@ public class JwtUser implements UserDetails {
 
     private final Long deptId;
 
+    private final String regionId;
+
     @JsonIgnore
     private final Collection<GrantedAuthority> authorities;
 

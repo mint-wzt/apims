@@ -132,9 +132,12 @@ CREATE TABLE `dept`  (
 INSERT INTO `dept` VALUES (1, '江永县农业局', 0, b'1', '431125',0,'湖南省永州市江永县',null ,'湖南省永州市江永县农业局',null,null ,1,'2020-03-01 12:07:37',null );
 INSERT INTO `dept` VALUES (2, '采购部', 1, b'1', '431125',0,'湖南省永州市江永县',null ,'湖南省永州市江永县农业局',null,null ,1,'2020-03-01 12:07:37',null );
 INSERT INTO `dept` VALUES (3, '生产部', 1, b'1', '431125',0,'湖南省永州市江永县',null ,'湖南省永州市江永县农业局',null,null ,1,'2020-03-01 12:07:37',null );
+
 -- INSERT INTO `dept` VALUES (4, '道县农业局', 0, b'1', '2020-03-01 12:07:37');
 -- -- INSERT INTO `dept` VALUES (5, '采购部', 4, b'1', '2020-03-25 11:04:50');
 -- -- INSERT INTO `dept` VALUES (6, '生产部', 4, b'1', '2020-03-25 11:04:53');
+
+INSERT INTO `dept` VALUES (63, '宁远县', 0, b'1', '431126',0,'湖南省永州市宁远县',null ,'湖南省永州市宁远县',null,null ,1,'2020-03-01 12:07:37',null );
 
 
 
@@ -1128,4 +1131,34 @@ INDEX `FKimefryny6jsyzjykiurwnknqp`(`product_id`) USING BTREE,
 INDEX `FKimefryny6juijlikslgwnknqp`(`dept_id`) USING BTREE,
 CONSTRAINT `FKimefryny6jsyzjykiurwnknqp` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
 CONSTRAINT `FKimefryny6juijlikslgwnknqp` FOREIGN KEY (`dept_id`) REFERENCES `dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 行业数据统计
+drop table if exists `industry_statistics`;
+create table `industry_statistics`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`region_id` varchar (255) null default null comment '行政编码',
+`region_name` varchar (255) null default null comment '行政名称',
+`statistics_item` varchar (255) null default null comment '统计项目',
+`statistics_total` decimal (16,0) null default null comment '统计总量',
+`unit` varchar (255) null default null comment '计量单位',
+`create_uid` bigint(20) null default null comment '统计人ID',
+`create_username` varchar (255) null default null comment '统计人',
+`statistics_time` datetime null default null comment '统计时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 产品分布统计数据
+drop table if exists `product_statistics`;
+create table `product_statistics`(
+`id` bigint(20) not null primary key comment 'ID',
+`region_id` varchar (255) null default null comment '行政编码',
+`region_name` varchar (255) null default null comment '行政名称',
+`product_code` varchar (255) null default null comment '产品编码',
+`product_name` varchar (255) null default null comment '产品名称',
+`statistics_item` varchar (255) null default null comment '统计项目',
+`statistics_total` decimal (16,0) null default null comment '统计总量',
+`unit` varchar (255) null default null comment '计量单位',
+`create_uid` bigint(20) null default null comment '统计人ID',
+`create_username` varchar (255) null default null comment '统计人',
+`statistics_time` datetime null default null comment '统计时间'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;

@@ -1,8 +1,14 @@
 package me.zhengjie.modules.system.service.impl;
 
+import me.zhengjie.modules.statistics.domain.IndustryStatistics;
+import me.zhengjie.modules.statistics.service.IndustryStatisticsService;
+import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Employee;
+import me.zhengjie.modules.system.domain.Region;
 import me.zhengjie.modules.system.domain.User;
+import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.repository.EmployeeRepository;
+import me.zhengjie.modules.system.repository.RegionRepository;
 import me.zhengjie.modules.system.service.EmployeeService;
 import me.zhengjie.modules.system.service.dto.*;
 import me.zhengjie.modules.system.service.mapper.EmployeeMapper;
@@ -34,6 +40,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
 
+    @Autowired
+    private IndustryStatisticsService statisticsService;
+
+    @Autowired
+    private DeptRepository deptRepository;
+
+
     /**
      * 按ID查询
      * @param id
@@ -55,7 +68,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public EmployeeDto create(Employee employee) {
-        return employeeMapper.toDto(employeeRepository.save(employee));
+        Employee e = employeeRepository.save(employee);
+        // 为地区添加组织机构数
+        IndustryStatistics industryStatistics = new IndustryStatistics();
+        Dept dept = deptRepository.findById(e.getDept().getId()).get();
+        industryStatistics.setRegionId(dept.getRegion().getId());
+        industryStatistics.setRegionName(dept.getRegion().getExtName());
+        industryStatistics.setStatisticsTime(e.getCreateTime());
+        industryStatistics.setStatisticsTotal(1d);
+        industryStatistics.setUnit("人");
+        industryStatistics.setStatisticsItem("员工");
+        statisticsService.create(industryStatistics);
+
+        return employeeMapper.toDto(e);
     }
 
     /**

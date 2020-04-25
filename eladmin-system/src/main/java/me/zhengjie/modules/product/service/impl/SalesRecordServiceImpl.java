@@ -1,5 +1,6 @@
 package me.zhengjie.modules.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.product.domain.Product;
 import me.zhengjie.modules.product.domain.SalesRecord;
@@ -9,6 +10,14 @@ import me.zhengjie.modules.product.service.dto.ProductDto;
 import me.zhengjie.modules.product.service.dto.SalesRecordDto;
 import me.zhengjie.modules.product.service.dto.SalesRecordQueryCriteria;
 import me.zhengjie.modules.product.service.mapper.SalesRecordMapper;
+import me.zhengjie.modules.statistics.domain.ProductStatistics;
+import me.zhengjie.modules.statistics.service.ProductStatisticsService;
+import me.zhengjie.modules.system.domain.Region;
+import me.zhengjie.modules.system.repository.DeptRepository;
+import me.zhengjie.modules.system.repository.RegionRepository;
+import me.zhengjie.modules.system.service.DeptService;
+import me.zhengjie.modules.system.service.dto.DeptDto;
+import me.zhengjie.modules.system.service.dto.RegionDto;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
@@ -39,6 +48,12 @@ public class SalesRecordServiceImpl implements SalesRecordService {
     @Autowired
     private SalesRecordMapper salesRecordMapper;
 
+    @Autowired
+    private DeptService deptService;
+
+    @Autowired
+    private ProductStatisticsService statisticsService;
+
     @Override
     public SalesRecordDto findById(long id) {
         SalesRecord salesRecord = salesRecordRepository.findById(id).orElseGet(SalesRecord::new);
@@ -50,7 +65,34 @@ public class SalesRecordServiceImpl implements SalesRecordService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public SalesRecordDto create(SalesRecord resources) {
-        return salesRecordMapper.toDto(salesRecordRepository.save(resources));
+        SalesRecord salesRecord = salesRecordRepository.save(resources);
+        DeptDto deptDto = deptService.findById(salesRecord.getDept().getId());
+        log.info(JSON.toJSONString(salesRecord));
+        ProductStatistics statistics = get(salesRecord,deptDto,"销量",salesRecord.getSalesNumber(),resources.getSalesUnit());
+        log.info(JSON.toJSONString(statistics));
+        statisticsService.create(statistics);
+        statisticsService.create(get(salesRecord,deptDto,"销售额",salesRecord.getSales(),"元"));
+        return salesRecordMapper.toDto(salesRecord);
+    }
+
+    /**
+     * 创建产品统计数据
+     * @param resources
+     * @param deptDto
+     * @param unit
+     * @return
+     */
+    public ProductStatistics get(SalesRecord resources, DeptDto deptDto, String item,Double total,String unit){
+        ProductStatistics productStatistics = new ProductStatistics();
+        productStatistics.setProductCode(resources.getProductCode());
+        productStatistics.setProductName(resources.getProductName());
+        productStatistics.setRegionId(deptDto.getRegion().getId());
+        productStatistics.setRegionName(deptDto.getRegion().getExtName());
+        productStatistics.setStatisticsTime(resources.getCreateTime());
+        productStatistics.setStatisticsItem(item);
+        productStatistics.setStatisticsTotal(total);
+        productStatistics.setUnit(unit);
+        return productStatistics;
     }
 
     @Override

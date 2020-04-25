@@ -41,4 +41,9 @@ public class RegionServiceImpl implements RegionService {
 
         return null;
     }
+
+    @Override
+    public List<Region> findParents(String regionId){
+        return regionRepository.findParents(regionId);
+    }
 }

@@ -3,6 +3,8 @@ package me.zhengjie.modules.system.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.BadRequestException;
+import me.zhengjie.modules.statistics.domain.IndustryStatistics;
+import me.zhengjie.modules.statistics.service.IndustryStatisticsService;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Region;
 import me.zhengjie.modules.system.domain.User;
@@ -49,11 +51,14 @@ public class DeptServiceImpl implements DeptService {
 
     private final UserRepository userRepository;
 
-    public DeptServiceImpl(DeptRepository deptRepository, DeptMapper deptMapper, RegionRepository regionRepository, UserRepository userRepository) {
+    private final IndustryStatisticsService statisticsService;
+
+    public DeptServiceImpl(DeptRepository deptRepository, DeptMapper deptMapper, RegionRepository regionRepository, UserRepository userRepository,IndustryStatisticsService statisticsService) {
         this.deptRepository = deptRepository;
         this.deptMapper = deptMapper;
         this.regionRepository = regionRepository;
         this.userRepository = userRepository;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -140,9 +145,24 @@ public class DeptServiceImpl implements DeptService {
         // 否则，将上级部门地址作为该部门的地址
         if (r.getId() != null) {
             // 设计基础信息
-            r.setName(r.getTownName());
-            r.setExtName(r.getTownName());
-            r.setPid(r.getAreaId());
+            Region region = regionRepository.findById(r.getId()).orElseGet(Region::new);
+            if (region == null){
+                region.setId(r.getId());
+            }
+            region.setExtName(r.getExtName());
+            region.setName(r.getName());
+            region.setPid(r.getPid());
+            region.setExtId(r.getExtId());
+
+            region.setProvinceId(r.getProvinceId());
+            region.setProvinceName(r.getProvinceName());
+            region.setCityId(r.getCityId());
+            region.setCityName(r.getCityName());
+            region.setAreaName(r.getAreaName());
+            region.setAreaId(r.getAreaId());
+            region.setTownId(r.getTownId());
+            region.setTownName(r.getTownName());
+
             regionRepository.save(r);
         } else {
             // 设置子部门所属区域
@@ -152,7 +172,23 @@ public class DeptServiceImpl implements DeptService {
         }
         // 设置创建者ID
         resources.setCreateUid(userRepository.findByUsername(SecurityUtils.getUsername()).getId());
-        return deptMapper.toDto(deptRepository.save(resources));
+        Dept dept = deptRepository.save(resources);
+
+        // 为地区添加组织机构数
+        IndustryStatistics industryStatistics = new IndustryStatistics();
+        industryStatistics.setRegionId(dept.getRegion().getId());
+        industryStatistics.setRegionName(regionRepository.findById(dept.getRegion().getId()).get().getExtName());
+        industryStatistics.setStatisticsTime(dept.getCreateTime());
+        industryStatistics.setStatisticsTotal(1d);
+        industryStatistics.setUnit("个");
+        if (dept.getDeptType() == 1){
+            industryStatistics.setStatisticsItem("组织机构");
+        } else {
+            industryStatistics.setStatisticsItem("行政单位");
+        }
+        // 记录企业数
+        statisticsService.create(industryStatistics);
+        return deptMapper.toDto(dept);
     }
 
     @Override

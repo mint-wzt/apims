@@ -20,4 +20,11 @@ public interface RegionService {
      * @return
      */
     List<Region> findByName(String name);
+
+    /**
+     * 查询父类
+     * @param regionId
+     * @return
+     */
+    List<Region> findParents(String regionId);
 }

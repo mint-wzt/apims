@@ -1,13 +1,18 @@
 package me.zhengjie.modules.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.modules.product.domain.Product;
 import me.zhengjie.modules.product.repository.ProductRepository;
+import me.zhengjie.modules.product.service.CategoryService;
 import me.zhengjie.modules.product.service.ProductService;
+import me.zhengjie.modules.product.service.dto.ProductDataDto;
 import me.zhengjie.modules.product.service.dto.ProductDto;
 import me.zhengjie.modules.product.service.dto.ProductQueryCriteria;
 import me.zhengjie.modules.product.service.mapper.ProductMapper;
+import me.zhengjie.modules.statistics.domain.ProductStatistics;
+import me.zhengjie.modules.statistics.service.ProductStatisticsService;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Region;
 import me.zhengjie.modules.system.domain.User;
@@ -45,6 +50,12 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private DeptRepository deptRepository;
 
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private ProductStatisticsService productStatisticsService;
+
     @Override
     @Cacheable(key = "#p0")
     public ProductDto findById(long id) {
@@ -63,7 +74,20 @@ public class ProductServiceImpl implements ProductService {
         Dept dept = deptRepository.findById(resources.getDept().getId()).orElseGet(Dept::new);
         ValidationUtil.isNull(dept.getId(),"dept","id",resources.getDept().getId());
         resources.setRegion(dept.getRegion());
-        return productMapper.toDto(productRepository.save(resources));
+
+        Product product = productRepository.save(resources);
+
+        // 添加产品统计数据
+        ProductStatistics statistics = new ProductStatistics();
+        statistics.setRegionId(dept.getRegion().getId());
+        statistics.setRegionName(dept.getRegion().getExtName());
+        statistics.setStatisticsItem(categoryService.findOne(resources.getCategory().getId()).getName());
+        statistics.setStatisticsTime(product.getCreateTime());
+        statistics.setStatisticsTotal(1d);
+        statistics.setUnit("种（个）");
+        productStatisticsService.create(statistics);
+
+        return productMapper.toDto(product);
     }
 
     @Override

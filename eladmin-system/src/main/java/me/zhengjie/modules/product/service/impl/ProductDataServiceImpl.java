@@ -8,20 +8,23 @@ import me.zhengjie.modules.product.domain.ProductData;
 import me.zhengjie.modules.product.repository.ProductDataRepository;
 import me.zhengjie.modules.product.repository.ProductRepository;
 import me.zhengjie.modules.product.service.ProductDataService;
-import me.zhengjie.modules.product.service.dto.CategoryDto;
 import me.zhengjie.modules.product.service.dto.ProductDataDto;
 import me.zhengjie.modules.product.service.dto.ProductDataQueryCriteria;
 import me.zhengjie.modules.product.service.mapper.ProductDataMapper;
-import me.zhengjie.modules.system.domain.Menu;
-import me.zhengjie.modules.system.domain.User;
+import me.zhengjie.modules.statistics.domain.IndustryStatistics;
+import me.zhengjie.modules.statistics.domain.ProductStatistics;
+import me.zhengjie.modules.statistics.service.IndustryStatisticsService;
+import me.zhengjie.modules.statistics.service.ProductStatisticsService;
+import me.zhengjie.modules.system.domain.Dept;
+import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.utils.StringUtils;
 import me.zhengjie.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +48,15 @@ public class ProductDataServiceImpl implements ProductDataService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private DeptRepository deptRepository;
+
+    @Autowired
+    private IndustryStatisticsService statisticsService;
+
+    @Autowired
+    private ProductStatisticsService productStatisticsService;
 
     @Override
     @Cacheable
@@ -86,7 +98,48 @@ public class ProductDataServiceImpl implements ProductDataService {
         if (resources.getDataStatus() == 1 && productDatas.size() != 0) {
             resources.setPid(productDatas.get(0).getId());
         }
+
+        Dept dept = deptRepository.findById(resources.getDept().getId()).get();
+        // 产品信息
+        if (resources.getDataStatus() == 0){
+
+            // 添加农产品产业数量
+            statisticsService.create(getIndustryStatistics(dept,resources,"种",1d,resources.getProductType()));
+
+            // 添加种植面积、
+            if (!StringUtils.isBlank(resources.getAreaUnit())){
+                // 添加农产品产业数量
+                statisticsService.create(getIndustryStatistics(dept,resources,"亩",resources.getArea(),"种植面积"));
+            }else {
+                // 添加农产品养殖数量
+                statisticsService.create(getIndustryStatistics(dept,resources,"条（只）",resources.getCount(),"养殖数量"));
+            }
+        }
+
+        // 添加产量
+        ProductStatistics productStatistics = new ProductStatistics();
+        productStatistics.setRegionId(dept.getRegion().getId());
+        productStatistics.setRegionName(dept.getRegion().getExtName());
+        productStatistics.setStatisticsItem("产量");
+        productStatistics.setStatisticsTotal(resources.getOutput());
+        productStatistics.setUnit(resources.getOutputUnit());
+        productStatistics.setProductName(resources.getProductName());
+        productStatistics.setStatisticsTime(resources.getManufactureDate());
+        productStatisticsService.create(productStatistics);
+
         return dataMapper.toDto(dataRepository.save(resources));
+    }
+
+    // 创建IndustryStatistics实体类
+    public IndustryStatistics getIndustryStatistics(Dept dept, ProductData productData, String unit, Double total, String item){
+        IndustryStatistics statistics = new IndustryStatistics();
+        statistics.setRegionId(dept.getRegion().getId());
+        statistics.setRegionName(dept.getRegion().getExtName());
+        statistics.setStatisticsTime(productData.getManufactureDate());
+        statistics.setStatisticsItem(item);
+        statistics.setStatisticsTotal(total);
+        statistics.setUnit(unit);
+        return statistics;
     }
 
     @Override
