@@ -11,17 +11,16 @@ import me.zhengjie.modules.product.service.dto.SalesRecordDto;
 import me.zhengjie.modules.product.service.dto.SalesRecordQueryCriteria;
 import me.zhengjie.modules.product.service.mapper.SalesRecordMapper;
 import me.zhengjie.modules.statistics.domain.ProductStatistics;
+import me.zhengjie.modules.statistics.domain.SalesStatistics;
 import me.zhengjie.modules.statistics.service.ProductStatisticsService;
+import me.zhengjie.modules.statistics.service.SalesStatisticsService;
 import me.zhengjie.modules.system.domain.Region;
 import me.zhengjie.modules.system.repository.DeptRepository;
 import me.zhengjie.modules.system.repository.RegionRepository;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.dto.DeptDto;
 import me.zhengjie.modules.system.service.dto.RegionDto;
-import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.QueryHelp;
-import me.zhengjie.utils.ValidationUtil;
+import me.zhengjie.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -52,7 +51,7 @@ public class SalesRecordServiceImpl implements SalesRecordService {
     private DeptService deptService;
 
     @Autowired
-    private ProductStatisticsService statisticsService;
+    private SalesStatisticsService statisticsService;
 
     @Override
     public SalesRecordDto findById(long id) {
@@ -68,32 +67,22 @@ public class SalesRecordServiceImpl implements SalesRecordService {
         SalesRecord salesRecord = salesRecordRepository.save(resources);
         DeptDto deptDto = deptService.findById(salesRecord.getDept().getId());
         log.info(JSON.toJSONString(salesRecord));
-        ProductStatistics statistics = get(salesRecord,deptDto,"销量",salesRecord.getSalesNumber(),resources.getSalesUnit());
-        log.info(JSON.toJSONString(statistics));
-        statisticsService.create(statistics);
-        statisticsService.create(get(salesRecord,deptDto,"销售额",salesRecord.getSales(),"元"));
+
+        SalesStatistics salesStatistics = new SalesStatistics();
+        salesStatistics.setProductCode(resources.getProductCode());
+        salesStatistics.setProductName(resources.getProductName());
+        salesStatistics.setRegionId(deptDto.getRegion().getId());
+        salesStatistics.setRegionName(deptDto.getRegion().getExtName());
+        salesStatistics.setSaleNumber(resources.getSalesNumber());
+        salesStatistics.setSaleUnit(resources.getSalesUnit());
+        salesStatistics.setSales(resources.getSales()/10000);
+        salesStatistics.setSalesUnit("万元");
+        salesStatistics.setStatisticsTime(DateUtils.getYearAndMonthByTimeStamp(resources.getSalesDate()));
+        statisticsService.create(salesStatistics);
+
         return salesRecordMapper.toDto(salesRecord);
     }
 
-    /**
-     * 创建产品统计数据
-     * @param resources
-     * @param deptDto
-     * @param unit
-     * @return
-     */
-    public ProductStatistics get(SalesRecord resources, DeptDto deptDto, String item,Double total,String unit){
-        ProductStatistics productStatistics = new ProductStatistics();
-        productStatistics.setProductCode(resources.getProductCode());
-        productStatistics.setProductName(resources.getProductName());
-        productStatistics.setRegionId(deptDto.getRegion().getId());
-        productStatistics.setRegionName(deptDto.getRegion().getExtName());
-        productStatistics.setStatisticsTime(resources.getCreateTime());
-        productStatistics.setStatisticsItem(item);
-        productStatistics.setStatisticsTotal(total);
-        productStatistics.setUnit(unit);
-        return productStatistics;
-    }
 
     @Override
     @CacheEvict(allEntries = true)

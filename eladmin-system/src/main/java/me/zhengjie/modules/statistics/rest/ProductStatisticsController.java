@@ -27,4 +27,10 @@ public class ProductStatisticsController {
     public ResponseEntity<Object> get(ProductStatisticsQueryCriteria criteria){
         return new ResponseEntity<>(productStatisticsService.get(criteria), HttpStatus.OK);
     }
+
+    @GetMapping(value = "/products")
+    @ApiOperation("获取该地区某种种类的产品数据")
+    public ResponseEntity<Object> getProductByCategory(ProductStatisticsQueryCriteria criteria){
+        return new ResponseEntity<>(productStatisticsService.getProductByCategory(criteria), HttpStatus.OK);
+    }
 }

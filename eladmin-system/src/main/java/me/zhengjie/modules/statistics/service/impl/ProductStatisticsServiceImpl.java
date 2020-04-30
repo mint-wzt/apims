@@ -16,7 +16,9 @@ import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +59,7 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
         ProductStatistics productStatistics;
         if (resources.getProductName() == null){
             productStatistics = repository.findByRegionIdAndStatisticsItem(resources.getRegionId(),resources.getStatisticsItem());
-        }else { // 添加的是农产品的产量等信息
+        }else { // 添加的是农产品的产量/销量/具体分类具体产品的种数等信息
             productStatistics = findProductStatistics(resources.getRegionId(), resources.getProductName(),resources.getStatisticsItem());
         }
 
@@ -97,17 +99,32 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
     }
 
     @Override
-    @Cacheable
+//    @Cacheable
+    @CacheEvict
     public Object get(ProductStatisticsQueryCriteria criteria) {
-        if (criteria.getRegionId() == null){
+        if (criteria.getRegionName() == null){
             UserDto user = userService.findByName(SecurityUtils.getUsername());
-            criteria.setRegionId(user.getRegion().getId());
+            criteria.setRegionName(user.getRegion().getExtName());
         }
         Map<String,Object> map = new HashMap<>(5);
-        List<ProductStatistics> productStatistics = repository.findStatistics(criteria.getRegionId());
+        List<ProductStatistics> productStatistics = repository.findStatistics(criteria.getRegionName());
         map.put("category",productStatistics.stream().map(ProductStatistics::getStatisticsItem).collect(Collectors.toList()));
         map.put("statisticsData",productStatistics.stream().map(ProductStatistics::getStatisticsTotal).collect(Collectors.toList()));
         log.info(JSON.toJSONString(map));
         return map;
     }
+
+    @Override
+//    @Cacheable
+    @CacheEvict
+    public Object getProductByCategory(ProductStatisticsQueryCriteria criteria) {
+        log.info(JSON.toJSONString(criteria));
+        Map<String,Object> map = new HashMap<>();
+        List<ProductStatistics> statistics = repository.findWithRegionNameAndStatisticItem(criteria.getRegionName(),criteria.getCategory());
+        log.info(JSON.toJSONString(statistics));
+        map.put("products",statistics.stream().map(ProductStatistics::getProductName).collect(Collectors.toList()));
+        map.put("enterprises",statistics.stream().map(ProductStatistics::getStatisticsTotal).collect(Collectors.toList()));
+        return map;
+    }
+
 }

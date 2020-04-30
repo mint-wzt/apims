@@ -25,32 +25,6 @@ public interface ProductStatisticsService {
      */
     ProductStatistics create(ProductStatistics resources);
 
-//    /**
-//     * 编辑
-//     * @param resources /
-//     */
-//    void update(IndustryStatistics resources);
-//
-//    /**
-//     * 删除
-//     * @param ids /
-//     */
-//    void delete(Set<Long> ids);
-//
-//    /**
-//     * 获取所有
-//     * @param pageable
-//     * @return
-//     */
-//    Object queryAll(Pageable pageable);
-
-//    /**
-//     * 查询全部
-//     * @param criteria 条件
-//     * @param pageable 分页参数
-//     * @return /
-//     */
-//    Object queryAll(InspectionItemQueryCriteria criteria, Pageable pageable);
 
     /**
      * 查询全部不分页
@@ -66,11 +40,5 @@ public interface ProductStatisticsService {
      */
     Object get(ProductStatisticsQueryCriteria criteria);
 
-//    /**
-//     * 导出数据
-//     * @param queryAll 待导出的数据
-//     * @param response /
-//     * @throws IOException /
-//     */
-//    void download(List<IndustryStatistics> queryAll, HttpServletResponse response) throws IOException;
+    Object getProductByCategory(ProductStatisticsQueryCriteria criteria);
 }

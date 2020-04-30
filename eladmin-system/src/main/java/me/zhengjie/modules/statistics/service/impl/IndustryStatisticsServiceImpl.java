@@ -50,6 +50,7 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
 
     /**
      * 添加企业分布数据
+     *
      * @param resources /
      * @return
      */
@@ -64,14 +65,15 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
     @Override
     @Cacheable
     public IndustryStatisticsDto get(IndustryStatisticsQueryCriteria criteria) {
-        if (criteria.getRegionId() == null){
+        if (criteria.getRegionName() == null) {
             UserDto user = userService.findByName(SecurityUtils.getUsername());
-            criteria.setRegionId(user.getRegion().getId());
+            criteria.setRegionName(user.getRegion().getExtName());
         }
         IndustryStatisticsDto statisticsDto = new IndustryStatisticsDto();
-        List<IndustryStatistics> statistics = statisticsRepository.findByStatistics(criteria.getRegionId());
-        for (IndustryStatistics s : statistics){
-            switch (s.getStatisticsItem()){
+        List<IndustryStatistics> statistics = statisticsRepository.findByStatistics(criteria.getRegionName());
+        log.info(JSON.toJSONString(statistics));
+        for (IndustryStatistics s : statistics) {
+            switch (s.getStatisticsItem()) {
                 case "种植面积":
                     statisticsDto.setPlantingArea(s.getStatisticsTotal());
                     break;
@@ -93,14 +95,15 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
                 case "渔业":
                     statisticsDto.setFishery(s.getStatisticsTotal());
                     break;
-                default: break;
+                default:
+                    break;
             }
         }
         log.info(JSON.toJSONString(statisticsDto));
         return statisticsDto;
     }
 
-    public IndustryStatistics add(IndustryStatistics resources){
+    public IndustryStatistics add(IndustryStatistics resources) {
         IndustryStatistics industryStatistics = findIndustryStatistics(resources.getRegionId(), resources.getStatisticsItem());
         IndustryStatistics statistics;
         if (industryStatistics == null) {
@@ -116,7 +119,7 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
     public void addToParent(IndustryStatistics industryStatistics) {
         List<Region> regions = regionService.findParents(industryStatistics.getRegionId());
         log.info(JSON.toJSONString(regions));
-        for (Region region : regions){
+        for (Region region : regions) {
             IndustryStatistics statistics = new IndustryStatistics();
             statistics.setRegionId(region.getId());
             statistics.setRegionName(region.getExtName());

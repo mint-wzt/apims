@@ -3,6 +3,7 @@ package me.zhengjie.modules.product.service.impl;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.EntityExistException;
+import me.zhengjie.modules.product.domain.Category;
 import me.zhengjie.modules.product.domain.Product;
 import me.zhengjie.modules.product.repository.ProductRepository;
 import me.zhengjie.modules.product.service.CategoryService;
@@ -77,15 +78,29 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productRepository.save(resources);
 
-        // 添加产品统计数据
+        Category category = categoryService.findOne(resources.getCategory().getId());
+
+        // 添加产品:种数:统计数据
         ProductStatistics statistics = new ProductStatistics();
         statistics.setRegionId(dept.getRegion().getId());
         statistics.setRegionName(dept.getRegion().getExtName());
-        statistics.setStatisticsItem(categoryService.findOne(resources.getCategory().getId()).getName());
+        statistics.setStatisticsItem(category.getName());
+        statistics.setProductName("");
         statistics.setStatisticsTime(product.getCreateTime());
         statistics.setStatisticsTotal(1d);
         statistics.setUnit("种（个）");
         productStatisticsService.create(statistics);
+
+        // 添加：所属种类：具体产品：数量：的统计数据
+        ProductStatistics statistics1 = new ProductStatistics();
+        statistics1.setRegionId(dept.getRegion().getId());
+        statistics1.setRegionName(dept.getRegion().getExtName());
+        statistics1.setProductName(product.getName());
+        statistics1.setStatisticsItem(category.getName());
+        statistics1.setStatisticsTime(product.getCreateTime());
+        statistics1.setStatisticsTotal(1d);
+        statistics1.setUnit("种（个）");
+        productStatisticsService.create(statistics1);
 
         return productMapper.toDto(product);
     }

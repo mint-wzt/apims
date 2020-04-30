@@ -13,8 +13,8 @@ public class ProductStatisticsQueryCriteria implements Serializable {
     @Query
     private Long id;
 
-    @Query(propName = "id", type = Query.Type.IN, joinName = "region")
-    private Set<String> regionIds;
+    @Query(type = Query.Type.IN)
+    private Set<String> statisticsItem;
 
     @Query
     private String regionName;
@@ -24,6 +24,12 @@ public class ProductStatisticsQueryCriteria implements Serializable {
 
     @Query
     private String regionId;
+
+    @Query
+    private String category;
+
+    @Query
+    private String productName;
 
     @Query(type = Query.Type.BETWEEN)
     private List<Timestamp> statisticsTime;

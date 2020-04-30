@@ -1212,3 +1212,22 @@ create table `payment_employee`(
 INDEX `FKimefryny6juijlikslgiiinqp`(`payment_id`) USING BTREE,
 CONSTRAINT `FKimefryny6juijlikslgiiinqp` FOREIGN KEY (`payment_id`) REFERENCES `remuneration_payment` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 产品产量、销量、销售额统计数据
+drop table if exists `sales_statistics`;
+create table `sales_statistics`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`region_id` varchar (255) null default null comment '行政编码',
+`region_name` varchar (255) null default null comment '行政名称',
+`product_code` varchar (255) null default null comment '产品编码',
+`product_name` varchar (255) null default null comment '产品名称',
+`output` decimal (16,2) null default null comment '产量',
+`output_unit` varchar (255) null default null comment '产量单位',
+`sale_number` decimal (16,2) null default null comment '销量',
+`sale_unit` varchar (255) null default null comment '销量单位',
+`sales` decimal (16,2) null default null comment '销售额',
+`sales_unit` varchar (255) null default null comment '销售额单位',
+`statistics_time` varchar (255)  null default null comment '统计时间',
+`update_time` datetime null default null comment '更新时间',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;

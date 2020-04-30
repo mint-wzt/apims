@@ -13,14 +13,13 @@ import me.zhengjie.modules.product.service.dto.ProductDataQueryCriteria;
 import me.zhengjie.modules.product.service.mapper.ProductDataMapper;
 import me.zhengjie.modules.statistics.domain.IndustryStatistics;
 import me.zhengjie.modules.statistics.domain.ProductStatistics;
+import me.zhengjie.modules.statistics.domain.SalesStatistics;
 import me.zhengjie.modules.statistics.service.IndustryStatisticsService;
 import me.zhengjie.modules.statistics.service.ProductStatisticsService;
+import me.zhengjie.modules.statistics.service.SalesStatisticsService;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.repository.DeptRepository;
-import me.zhengjie.utils.FileUtil;
-import me.zhengjie.utils.QueryHelp;
-import me.zhengjie.utils.StringUtils;
-import me.zhengjie.utils.ValidationUtil;
+import me.zhengjie.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -56,7 +55,7 @@ public class ProductDataServiceImpl implements ProductDataService {
     private IndustryStatisticsService statisticsService;
 
     @Autowired
-    private ProductStatisticsService productStatisticsService;
+    private SalesStatisticsService salesStatisticsService;
 
     @Override
     @Cacheable
@@ -117,15 +116,15 @@ public class ProductDataServiceImpl implements ProductDataService {
         }
 
         // 添加产量
-        ProductStatistics productStatistics = new ProductStatistics();
-        productStatistics.setRegionId(dept.getRegion().getId());
-        productStatistics.setRegionName(dept.getRegion().getExtName());
-        productStatistics.setStatisticsItem("产量");
-        productStatistics.setStatisticsTotal(resources.getOutput());
-        productStatistics.setUnit(resources.getOutputUnit());
-        productStatistics.setProductName(resources.getProductName());
-        productStatistics.setStatisticsTime(resources.getManufactureDate());
-        productStatisticsService.create(productStatistics);
+        SalesStatistics salesStatistics = new SalesStatistics();
+        salesStatistics.setProductCode(resources.getProductType());
+        salesStatistics.setProductName(resources.getProductName());
+        salesStatistics.setRegionId(dept.getRegion().getId());
+        salesStatistics.setRegionName(dept.getRegion().getExtName());
+        salesStatistics.setOutput(resources.getOutput());
+        salesStatistics.setOutputUnit(resources.getOutputUnit());
+        salesStatistics.setStatisticsTime(DateUtils.getYearAndMonthByTimeStamp(resources.getManufactureDate()));
+        salesStatisticsService.create(salesStatistics);
 
         return dataMapper.toDto(dataRepository.save(resources));
     }

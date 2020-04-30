@@ -28,6 +28,6 @@ public interface IndustryStatisticsRepository extends JpaRepository<IndustryStat
 //    @Query("select i from IndustryStatistics i where regionId like i.regionId%")
 //    List<IndustryStatistics> findByContainsRegionId(@Param("regionId") String regionId);
 
-    @Query(value = "SELECT * FROM industry_statistics s WHERE s.region_id = ?1 AND (s.statistics_item = '种植面积' OR s.statistics_item = '养殖数量' OR s.statistics_item = '组织机构' OR s.statistics_item = '员工' OR s.statistics_item = '畜牧业' OR s.statistics_item = '种植业' OR s.statistics_item = '渔业')",nativeQuery = true)
-    List<IndustryStatistics> findByStatistics(String regionId);
+    @Query(value = "SELECT * FROM industry_statistics s WHERE s.region_name = ?1 AND (s.statistics_item = '种植面积' OR s.statistics_item = '养殖数量' OR s.statistics_item = '组织机构' OR s.statistics_item = '员工' OR s.statistics_item = '畜牧业' OR s.statistics_item = '种植业' OR s.statistics_item = '渔业')",nativeQuery = true)
+    List<IndustryStatistics> findByStatistics(String regionName);
 }
