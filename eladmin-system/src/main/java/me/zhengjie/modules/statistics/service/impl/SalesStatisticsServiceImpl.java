@@ -15,6 +15,8 @@ import me.zhengjie.utils.DoubleUtils;
 import me.zhengjie.utils.QueryHelp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,6 +39,7 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
     private SalesStatisticsRepository repository;
 
     @Override
+    @CacheEvict(allEntries = true)
     public SalesStatistics create(SalesStatistics resources) {
         addToParent(resources);
         return resources;
@@ -84,6 +87,7 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
     }
 
     @Override
+    @Cacheable
     public Object get(SalesStatisticsQueryCriteria criteria) {
         log.info(JSON.toJSONString(criteria));
         if (criteria.getTimestamps1() != null) {
@@ -106,6 +110,7 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
     }
 
     @Override
+    @Cacheable
     public Object getProductSalesRank(SalesStatisticsQueryCriteria criteria) {
         log.info(JSON.toJSONString(criteria));
         if (criteria.getTimestamps1() != null) {

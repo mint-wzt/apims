@@ -20,6 +20,11 @@ public class DateUtils {
         return date.substring(0, 7);
     }
 
+    public static String getYearAndMonthAndDayByTimeStamp(Timestamp timeStamp){
+        String date = timeStampToDate(timeStamp);
+        return date.substring(0, 10);
+    }
+
     public static int getYearByTimeStamp(Timestamp timeStamp) {
         String date = timeStampToDate(timeStamp);
         String year = date.substring(0, 4);

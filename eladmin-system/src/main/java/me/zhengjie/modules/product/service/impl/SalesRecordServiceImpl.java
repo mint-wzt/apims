@@ -5,13 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.product.domain.Product;
 import me.zhengjie.modules.product.domain.SalesRecord;
 import me.zhengjie.modules.product.repository.SalesRecordRepository;
+import me.zhengjie.modules.product.service.ProductService;
 import me.zhengjie.modules.product.service.SalesRecordService;
 import me.zhengjie.modules.product.service.dto.ProductDto;
 import me.zhengjie.modules.product.service.dto.SalesRecordDto;
 import me.zhengjie.modules.product.service.dto.SalesRecordQueryCriteria;
 import me.zhengjie.modules.product.service.mapper.SalesRecordMapper;
+import me.zhengjie.modules.statistics.domain.Market;
+import me.zhengjie.modules.statistics.domain.Price;
 import me.zhengjie.modules.statistics.domain.ProductStatistics;
 import me.zhengjie.modules.statistics.domain.SalesStatistics;
+import me.zhengjie.modules.statistics.service.MarketService;
+import me.zhengjie.modules.statistics.service.PriceService;
 import me.zhengjie.modules.statistics.service.ProductStatisticsService;
 import me.zhengjie.modules.statistics.service.SalesStatisticsService;
 import me.zhengjie.modules.system.domain.Region;
@@ -53,6 +58,15 @@ public class SalesRecordServiceImpl implements SalesRecordService {
     @Autowired
     private SalesStatisticsService statisticsService;
 
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private PriceService priceService;
+
+    @Autowired
+    private MarketService marketService;
+
     @Override
     public SalesRecordDto findById(long id) {
         SalesRecord salesRecord = salesRecordRepository.findById(id).orElseGet(SalesRecord::new);
@@ -68,6 +82,7 @@ public class SalesRecordServiceImpl implements SalesRecordService {
         DeptDto deptDto = deptService.findById(salesRecord.getDept().getId());
         log.info(JSON.toJSONString(salesRecord));
 
+        // 销售数据统计
         SalesStatistics salesStatistics = new SalesStatistics();
         salesStatistics.setProductCode(resources.getProductCode());
         salesStatistics.setProductName(resources.getProductName());
@@ -79,6 +94,29 @@ public class SalesRecordServiceImpl implements SalesRecordService {
         salesStatistics.setSalesUnit("万元");
         salesStatistics.setStatisticsTime(DateUtils.getYearAndMonthByTimeStamp(resources.getSalesDate()));
         statisticsService.create(salesStatistics);
+
+        // 添加价格统计
+        Price price = new Price();
+        price.setProductName(resources.getProductName());
+        price.setProductCode(resources.getProductCode());
+        price.setProductId(resources.getProduct().getId());
+        price.setProvinceName(resources.getRegionId());
+        price.setMarket(resources.getRegionId() + resources.getSalesArea());
+        price.setPrice(resources.getPrice());
+        price.setPriceUnit(resources.getPriceUnit());
+        price.setStatisticsTime(DateUtils.getYearAndMonthAndDayByTimeStamp(resources.getSalesDate()));
+        price.setPublishTime(price.getStatisticsTime());
+        ProductDto dto = productService.findById(resources.getProduct().getId());
+        price.setCategoryName(dto.getCategory().getName());
+        price.setCategoryCode(dto.getCategory().getCode());
+        priceService.create(price);
+
+        // 保存市场记录
+        Market market = new Market();
+        market.setRegionName(resources.getRegionId());
+        market.setMarketName(resources.getRegionId() + resources.getSalesArea());
+        market.setRegionId(deptDto.getRegion().getId());
+        marketService.create(market);
 
         return salesRecordMapper.toDto(salesRecord);
     }

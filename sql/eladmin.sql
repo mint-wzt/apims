@@ -1231,3 +1231,51 @@ create table `sales_statistics`(
 `update_time` datetime null default null comment '更新时间',
 `create_time` datetime null default null comment '创建时间'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 农产品最新价格表
+drop table if exists `price`;
+create table `price`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`product_id` bigint(20) null default null comment '农产品ID',
+`product_code` varchar (255) null default null comment '产品编码',
+`product_name` varchar (255) null default null comment '产品名称',
+`category_code` varchar (255) null default null comment '产品编码',
+`category_name` varchar (255) null default null comment '分类名称',
+`price` decimal (16,2) null default null comment '价格',
+`price_unit` varchar (255) null default null comment '价格单位',
+`market` varchar (255) null default null comment '采集市场',
+`publish_time` varchar (255) null default null comment '发布时间',
+`province_name` varchar (255) null default null comment '省市',
+`city_name` varchar (255) null default null comment '采集城市',
+`area_name` varchar (255) null default null comment '采集县',
+`town_name` varchar (255) null default null comment '采集镇',
+`statistics_time` varchar (255) null default null comment '统计时间',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 市场表
+drop table if exists `market`;
+create table `market`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`region_id` varchar (255) null default null comment '行政编码',
+`region_name` varchar (255) null default null comment '行政名称',
+`market_name` varchar (255) null default null comment '市场名称',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 每月价格表
+drop table if exists `month_price`;
+create table `month_price`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`region_id` varchar (255) null default null comment '行政编码',
+`region_name` varchar (255) null default null comment '行政区划',
+`product_code` varchar (255) null default null comment '产品编码',
+`product_name` varchar (255) null default null comment '产品名称',
+`price` decimal (16,2) null default null comment '价格',
+`price_unit` varchar (255) null default null comment '价格单位',
+`market` varchar (255) null default null comment '采集市场',
+`year` varchar (255) null default null comment '年份',
+`month` varchar (255) null default null comment '月份',
+`statistics_time` varchar (255) null default null comment '统计时间',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
