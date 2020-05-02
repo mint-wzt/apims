@@ -58,11 +58,11 @@ public class MonthPrice implements Serializable {
     /**
     * 年份
     */
-    private String year;
+    private String statisticsYear;
     /**
     * 月份
     */
-    private String month;
+    private String statisticsMonth;
     /**
     * 统计时间
     */

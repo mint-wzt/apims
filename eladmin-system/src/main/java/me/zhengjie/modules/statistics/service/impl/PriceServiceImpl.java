@@ -43,8 +43,8 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-//    @Cacheable
-    @CacheEvict
+    @Cacheable
+//    @CacheEvict
     public Object getLatestPrice(PriceQueryCriteria criteria) {
         log.info(JSON.toJSONString(criteria));
         if (criteria.getStartTime() != null) {

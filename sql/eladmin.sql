@@ -1274,8 +1274,8 @@ create table `month_price`(
 `price` decimal (16,2) null default null comment '价格',
 `price_unit` varchar (255) null default null comment '价格单位',
 `market` varchar (255) null default null comment '采集市场',
-`year` varchar (255) null default null comment '年份',
-`month` varchar (255) null default null comment '月份',
+`statistics_year` varchar (255) null default null comment '年份',
+`statistics_month` varchar (255) null default null comment '月份',
 `statistics_time` varchar (255) null default null comment '统计时间',
 `create_time` datetime null default null comment '创建时间'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;

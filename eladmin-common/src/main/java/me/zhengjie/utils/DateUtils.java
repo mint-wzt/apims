@@ -25,10 +25,9 @@ public class DateUtils {
         return date.substring(0, 10);
     }
 
-    public static int getYearByTimeStamp(Timestamp timeStamp) {
+    public static String getYearByTimeStamp(Timestamp timeStamp) {
         String date = timeStampToDate(timeStamp);
-        String year = date.substring(0, 4);
-        return Integer.parseInt(year);
+        return date.substring(0, 4);
     }
 
     public static int getMonthByTimeStamp(Timestamp timeStamp) {

@@ -7,6 +7,7 @@ import me.zhengjie.modules.statistics.service.MarketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
+    @Cacheable
     public List<Market> findByRegionName(String regionName) {
         List<Market> markets = marketRepository.findByRegionName(regionName);
         return markets;
