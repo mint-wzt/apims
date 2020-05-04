@@ -1,7 +1,7 @@
 <template>
-  <div class="app-container">
-    <el-row :gutter="20" style="align-content: center">
-      <el-col :xs="24" :sm="24" :md="16" :lg="8" :xl="8">
+  <div class="setup">
+    <el-row>
+      <el-col style="width: 500px;height: 500px">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>关于系统</span>
@@ -21,21 +21,17 @@
             <ul class="user-info">
               <li><div style="height: 100%"><svg-icon icon-class="login" /> 系统名称<div class="user-right">农产品基础数据库系统</div></div></li>
               <li><svg-icon icon-class="user1" /> 版权 <div class="user-right">© 2020 Wang Zhitong</div></li>
-              <li><svg-icon icon-class="user2" /> 备案号 <div class="user-right">湘ICP备18005431号</div></li>
+              <li><svg-icon icon-class="user2" /> 备案号 <div class="user-right">湘ICP备20003851号</div></li>
             </ul>
           </div>
         </el-card>
       </el-col>
     </el-row>
-    <updateEmail ref="email" :email="user.email" />
-    <updatePass ref="pass" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import updatePass from '../user/center/updatePass'
-import updateEmail from '../user/center/updateEmail'
 import { getToken } from '@/utils/auth'
 import store from '@/store'
 import { isvalidPhone } from '@/utils/validate'
@@ -45,7 +41,6 @@ import { editUser } from '@/api/system/user'
 import Logo from '@/assets/images/logo.png'
 export default {
   name: 'Center',
-  components: { updatePass, updateEmail },
   mixins: [crud],
   data() {
     // 自定义验证
@@ -137,6 +132,13 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
+  .setup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    margin-top: 5%;
+  }
   .avatar-uploader-icon {
     font-size: 28px;
     width: 120px;

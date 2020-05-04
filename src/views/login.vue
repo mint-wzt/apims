@@ -53,8 +53,8 @@ export default {
       codeUrl: '',
       cookiePass: '',
       loginForm: {
-        username: 'admin',
-        password: '123456',
+        username: '',
+        password: '',
         rememberMe: false,
         code: '',
         uuid: ''
@@ -147,8 +147,10 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-image:url(http://d.zdqx.com/bingfj_160902/002.jpg);
+    background-image:url(https://api.isoyu.com/bing_images.php);
     background-size: cover;
+
+    /*http://d.zdqx.com/bingfj_160902/002.jpg*/
   }
   .title {
     margin: 0 auto 30px auto;

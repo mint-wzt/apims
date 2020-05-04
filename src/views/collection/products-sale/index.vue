@@ -68,6 +68,9 @@
                 value-format="yyyy-MM-dd"
               />
             </el-form-item>
+            <el-form-item label="省市" prop="salesArea">
+              <v-region :city="false" :area="false" style="height: 10px; width: 178px" @values="regionChange" />
+            </el-form-item>
             <el-form-item label="销售区域" prop="salesArea">
               <el-input v-model="form.salesArea" />
             </el-form-item>
@@ -91,10 +94,10 @@
               <el-input v-model="form.price" />
             </el-form-item>
             <el-form-item label="价格单位" prop="priceUnit">
-              <el-input v-model="form.priceUnit" placeholder="请输入价格单位" />
+              <el-input v-model="form.priceUnit" placeholder="单位如：元/公斤等" />
             </el-form-item>
             <el-form-item label="销售额" prop="sales">
-              <el-input v-model="form.sales" />
+              <el-input v-model="form.sales" /><span style=" position: absolute; top: 1%; right: 4%;color: #adadad; display: table-cell;white-space: nowrap; padding: 1px 8px;">元</span>
             </el-form-item>
             <el-form-item label="生产批次" prop="batchNumber">
               <el-input v-model="form.batchNumber" />
@@ -280,8 +283,17 @@ export default {
           type: 'warning'
         })
         return false
+      } else if (!crud.form.regionId) {
+        this.$message({
+          message: '省市不能为空',
+          type: 'warning'
+        })
+        return false
       }
       return true
+    },
+    regionChange(data) {
+      this.form.regionId = data.province === null ? null : data.province.value
     },
     // 获取左侧部门数据
     getDeptDatas() {

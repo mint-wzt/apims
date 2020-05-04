@@ -56,22 +56,22 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: ['粮油', '果品', '畜产品', '水产品', '蔬菜']
         },
         calculable: true,
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '企业分布',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 320, name: '粮油' },
+              { value: 240, name: '果品' },
+              { value: 149, name: '畜产品' },
+              { value: 100, name: '水产品' },
+              { value: 59, name: '蔬菜' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600

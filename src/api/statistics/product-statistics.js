@@ -7,3 +7,11 @@ export function getProductStatistics(params) {
     params
   })
 }
+
+export function getProductsByCatagory(params) {
+  return request({
+    url: 'api/product-statistics/products',
+    method: 'get',
+    params
+  })
+}

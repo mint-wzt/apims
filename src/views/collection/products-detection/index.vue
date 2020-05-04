@@ -282,6 +282,7 @@ export default {
       // this.getRoles()
       // this.getRoleLevel()
       // form.enabled = form.enabled.toString()
+      this.form.inspectionRecord.code = this.randomOrder()
     },
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
@@ -403,6 +404,14 @@ export default {
         this.form.inspectionItems = res.content[0].inspectionItems
         console.log(JSON.stringify(this.form.inspectionItems))
       }).catch(() => { })
+    },
+    randomOrder() {
+      var random_no = 'JC'
+      for (var i = 0; i < 3; i++) {
+        random_no += Math.floor(Math.random() * 10)
+      }
+      random_no = random_no + new Date().getTime()
+      return random_no
     }
   }
 }
