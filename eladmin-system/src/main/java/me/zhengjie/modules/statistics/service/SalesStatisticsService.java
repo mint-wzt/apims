@@ -3,7 +3,11 @@ package me.zhengjie.modules.statistics.service;
 import me.zhengjie.modules.statistics.domain.ProductStatistics;
 import me.zhengjie.modules.statistics.domain.SalesStatistics;
 import me.zhengjie.modules.statistics.service.dto.SalesStatisticsQueryCriteria;
+import me.zhengjie.modules.system.service.dto.UserDto;
+import org.springframework.data.domain.Pageable;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 public interface SalesStatisticsService {
@@ -28,5 +32,27 @@ public interface SalesStatisticsService {
      * @return
      */
     Object getProductSalesRank(SalesStatisticsQueryCriteria criteria);
+
+    /**
+     * 获取产品销售详情信息
+     * @param criteria
+     * @return
+     */
+    Object getSalesData(SalesStatisticsQueryCriteria criteria, Pageable pageable);
+
+    /**
+     * 查询所有
+     * @param criteria
+     * @return
+     */
+    List<SalesStatistics> queryAll(SalesStatisticsQueryCriteria criteria);
+
+    /**
+     * 导出数据
+     * @param queryAll
+     * @param response
+     * @throws IOException
+     */
+    void download(List<SalesStatistics> queryAll, HttpServletResponse response) throws IOException;
 
 }

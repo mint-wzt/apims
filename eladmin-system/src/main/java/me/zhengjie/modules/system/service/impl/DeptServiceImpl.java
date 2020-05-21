@@ -200,8 +200,13 @@ public class DeptServiceImpl implements DeptService {
         }
         Dept dept = deptRepository.findById(resources.getId()).orElseGet(Dept::new);
         ValidationUtil.isNull(dept.getId(), "Dept", "id", resources.getId());
-        resources.setId(dept.getId());
-        deptRepository.save(resources);
+        dept.setAddress(resources.getAddress());
+        dept.setRegion(resources.getRegion());
+        dept.setPid(resources.getPid());
+        dept.setName(resources.getName());
+        dept.setDeptType(resources.getDeptType());
+        dept.setEnabled(resources.getEnabled());
+        deptRepository.save(dept);
     }
 
     @Override

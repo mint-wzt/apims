@@ -69,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional(rollbackFor = Exception.class)
     public EmployeeDto create(Employee employee) {
         Employee e = employeeRepository.save(employee);
-        // 为地区添加组织机构数
+        // 为地区添加员工数
         IndustryStatistics industryStatistics = new IndustryStatistics();
         Dept dept = deptRepository.findById(e.getDept().getId()).get();
         industryStatistics.setRegionId(dept.getRegion().getId());

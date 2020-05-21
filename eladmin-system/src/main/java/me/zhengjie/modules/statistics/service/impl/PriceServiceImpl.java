@@ -49,11 +49,10 @@ public class PriceServiceImpl implements PriceService {
         log.info(JSON.toJSONString(criteria));
         if (criteria.getStartTime() != null) {
             List<String> statisticsTime = new ArrayList<>(2);
-            statisticsTime.add(DateUtils.getYearAndMonthByTimeStamp(criteria.getStartTime()));
-            statisticsTime.add(DateUtils.getYearAndMonthByTimeStamp(criteria.getEndTime()));
+            statisticsTime.add(DateUtils.getYearAndMonthAndDayByTimeStamp(criteria.getStartTime()));
+            statisticsTime.add(DateUtils.getYearAndMonthAndDayByTimeStamp(criteria.getEndTime()));
             criteria.setStatisticsTime(statisticsTime);
         }
-        log.info(JSON.toJSONString(criteria));
         List<Price> prices = priceRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), new Sort(Sort.Direction.ASC, "statisticsTime"));
         Map<String,Object> map = new HashMap<>(3);
         map.put("date",prices.stream().map(Price::getStatisticsTime).collect(Collectors.toList()));

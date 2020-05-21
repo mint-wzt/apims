@@ -8,20 +8,26 @@ import me.zhengjie.modules.statistics.repository.SalesStatisticsRepository;
 import me.zhengjie.modules.statistics.service.SalesStatisticsService;
 import me.zhengjie.modules.statistics.service.dto.SalesStatisticsQueryCriteria;
 import me.zhengjie.modules.system.domain.Region;
+import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.service.RegionService;
 import me.zhengjie.modules.system.service.UserService;
-import me.zhengjie.utils.DateUtils;
-import me.zhengjie.utils.DoubleUtils;
-import me.zhengjie.utils.QueryHelp;
+import me.zhengjie.modules.system.service.dto.RoleSmallDto;
+import me.zhengjie.modules.system.service.dto.UserDto;
+import me.zhengjie.modules.system.service.dto.UserQueryCriteria;
+import me.zhengjie.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -124,4 +130,45 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
         map.put("sales",statistics.stream().map(SalesStatistics::getSales).collect(Collectors.toList()));
         return map;
     }
+
+    @Override
+    @Cacheable
+    public Object getSalesData(SalesStatisticsQueryCriteria criteria, Pageable pageable) {
+        if (criteria.getStatisticsTimes() != null && criteria.getStatisticsTimes().size() != 0){
+            List<String> times = new ArrayList<>(2);
+            times.add(DateUtils.getYearAndMonthByTimeStamp(criteria.getStatisticsTimes().get(0)));
+            times.add(DateUtils.getYearAndMonthByTimeStamp(criteria.getStatisticsTimes().get(1)));
+            criteria.setStatisticsTime(times);
+        }
+        Page<SalesStatistics> statistics = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder),pageable);
+        log.info(JSON.toJSONString(statistics));
+        return PageUtil.toPage(statistics);
+    }
+
+    @Override
+    @Cacheable
+    public List<SalesStatistics> queryAll(SalesStatisticsQueryCriteria criteria) {
+        List<SalesStatistics> salesStatistics = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
+        return salesStatistics;
+    }
+
+    @Override
+    public void download(List<SalesStatistics> queryAll, HttpServletResponse response) throws IOException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (SalesStatistics statistics : queryAll) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("地区", statistics.getRegionName());
+            map.put("邮编", statistics.getRegionId());
+            map.put("产品名称", statistics.getProductName());
+            map.put("产品编码", statistics.getProductCode());
+            map.put("产量", statistics.getOutput() + statistics.getOutputUnit());
+            map.put("销量", statistics.getSaleNumber() + statistics.getSaleUnit());
+            map.put("销售额", statistics.getSales() + statistics.getSalesUnit());
+            map.put("统计日期", statistics.getStatisticsTime());
+            list.add(map);
+        }
+        FileUtil.downloadExcel(list, response);
+    }
+
+
 }

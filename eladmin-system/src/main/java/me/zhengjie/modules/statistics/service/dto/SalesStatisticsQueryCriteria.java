@@ -25,4 +25,7 @@ public class SalesStatisticsQueryCriteria implements Serializable {
 
     @Query(type = Query.Type.BETWEEN)
     private List<String> statisticsTime;
+
+//    @Query(type = Query.Type.BETWEEN)
+    private List<Timestamp> statisticsTimes;
 }
