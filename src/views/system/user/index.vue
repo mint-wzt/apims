@@ -169,11 +169,11 @@
               />
             </template>
           </el-table-column>
-          <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" prop="createTime" width="140" label="创建日期">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
+          <!--          <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" prop="createTime" width="140" label="创建日期">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <span>{{ parseTime(scope.row.createTime) }}</span>-->
+          <!--            </template>-->
+          <!--          </el-table-column>-->
           <el-table-column
             v-permission="['admin','user:edit','user:del']"
             label="操作"

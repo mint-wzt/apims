@@ -58,7 +58,7 @@
             <el-form-item label="订单号" prop="orderNumber">
               <el-input v-model="form.orderNumber" />
             </el-form-item>
-            <el-form-item label="销售日期" required>
+            <el-form-item label="销售日期">
               <el-date-picker
                 v-model="form.salesDate"
                 type="date"
@@ -69,12 +69,20 @@
               />
             </el-form-item>
             <el-form-item label="省市" prop="salesArea">
-              <v-region :city="false" :area="false" style="height: 10px; width: 178px" @values="regionChange" />
+              <v-region type="column" :city="false" :area="false" :town="false" style="width: 174px" @values="regionChange" />
             </el-form-item>
             <el-form-item label="销售区域" prop="salesArea">
               <el-input v-model="form.salesArea" />
             </el-form-item>
-            <el-form-item label="产品" required>
+            <el-form-item label="组织机构" prop="dept.id">
+              <treeselect
+                v-model="form.dept.id"
+                :options="depts"
+                style="width: 178px"
+                placeholder="请选择组织机构"
+              />
+            </el-form-item>
+            <el-form-item label="产品">
               <el-select v-model="form.product.id" style="width: 178px" placeholder="请选择产品" @change="getProductName">
                 <el-option
                   v-for="(item, index) in products"
@@ -101,14 +109,6 @@
             </el-form-item>
             <el-form-item label="生产批次" prop="batchNumber">
               <el-input v-model="form.batchNumber" />
-            </el-form-item>
-            <el-form-item label="组织机构" prop="dept.id" required>
-              <treeselect
-                v-model="form.dept.id"
-                :options="depts"
-                style="width: 178px"
-                placeholder="请选择组织机构"
-              />
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">

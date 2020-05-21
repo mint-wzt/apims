@@ -5,6 +5,7 @@ export function getCategoryTree(params) {
     url: 'api/category/tree',
     method: 'get',
     params
+
   })
 }
 

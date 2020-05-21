@@ -117,11 +117,11 @@
           <el-table-column v-if="columns.visible('restrictions')" :show-overflow-tooltip="true" prop="restrictions" label="约束/条件" />
           <el-table-column v-if="columns.visible('unit')" :show-overflow-tooltip="true" prop="unit" label="计量单位" />
           <el-table-column v-if="columns.visible('remark')" :show-overflow-tooltip="true" prop="remark" label="备注" />
-          <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" prop="createTime" width="140" label="创建日期">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
+          <!--          <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" prop="createTime" width="140" label="创建日期">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <span>{{ parseTime(scope.row.createTime) }}</span>-->
+          <!--            </template>-->
+          <!--          </el-table-column>-->
           <el-table-column
             v-permission="['admin','description:edit','description:del']"
             label="操作"

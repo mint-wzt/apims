@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getProductSalesStatistics(params) {
   return request({
-    url: 'api/sales-statistics',
+    url: 'api/sales-statistics/sales',
     method: 'get',
     params
   })
@@ -11,6 +11,14 @@ export function getProductSalesStatistics(params) {
 export function getProductSalesRank(params) {
   return request({
     url: 'api/sales-statistics/sales-rank',
+    method: 'get',
+    params
+  })
+}
+
+export function getSalesData(params) {
+  return request({
+    url: 'api/sales-statistics',
     method: 'get',
     params
   })

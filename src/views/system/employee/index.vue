@@ -42,19 +42,13 @@
           <crudOperation show="" :permission="permission" />
         </div>
         <!--表单渲染-->
-        <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="570px">
-          <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="76px">
+        <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="630px">
+          <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="80px">
             <el-form-item label="姓名" prop="name">
-              <el-input v-model="form.name" />
-            </el-form-item>
-            <el-form-item label="性别">
-              <el-radio-group v-model="form.sex" style="width: 178px">
-                <el-radio label="男">男</el-radio>
-                <el-radio label="女">女</el-radio>
-              </el-radio-group>
+              <el-input v-model="form.name" placeholder="请输入姓名" />
             </el-form-item>
             <el-form-item label="编号" prop="number">
-              <el-input v-model="form.number" />
+              <el-input v-model="form.number" placeholder="请输入员工编号" />
             </el-form-item>
             <el-form-item label="机构" prop="dept.id">
               <treeselect
@@ -62,29 +56,34 @@
                 :options="depts"
                 style="width: 178px"
                 placeholder="选择部门"
-                @select="selectFun"
               />
             </el-form-item>
+            <el-form-item label="性别">
+              <el-radio-group v-model="form.sex" style="width: 178px">
+                <el-radio label="男">男</el-radio>
+                <el-radio label="女">女</el-radio>
+              </el-radio-group>
+            </el-form-item>
             <el-form-item label="职位" prop="position">
-              <el-input v-model="form.position" />
+              <el-input v-model="form.position" placeholder="请输入职位" />
             </el-form-item>
             <el-form-item label="电话" prop="contact">
-              <el-input v-model="form.contact" />
+              <el-input v-model="form.contact" placeholder="请输入电话" />
             </el-form-item>
             <el-form-item label="身份证" prop="idNumber">
-              <el-input v-model="form.idNumber" />
+              <el-input v-model="form.idNumber" placeholder="请输入身份证号码" />
             </el-form-item>
             <el-form-item label="种植面积" prop="cultivatedArea">
-              <el-input v-model="form.cultivatedArea" placeholder="xx亩" />
+              <el-input v-model="form.cultivatedArea" /><span style=" position: absolute; top: 1%; right: 4%;color: #adadad; display: table-cell;white-space: nowrap; padding: 1px 8px;">亩</span>
             </el-form-item>
-            <el-form-item label="所在地区" prop="region" style="width: 370px;">
+            <el-form-item label="所在地区" prop="region">
               <v-region type="column" :town="true" @values="regionChange" />
             </el-form-item>
             <el-form-item label="详细地址" prop="address">
-              <el-input v-model="form.address" style="width: 370px;" placeholder="如村、道路、门牌号、小区、楼栋号、单元室等" />
+              <el-input v-model="form.address" style="width: 435px;" placeholder="如村、道路、门牌号、小区、楼栋号、单元室等" />
             </el-form-item>
             <el-form-item label="健康情况" prop="healthCondition">
-              <el-input v-model="form.healthCondition" />
+              <el-input v-model="form.healthCondition" placeholder="请输入健康情况" />
             </el-form-item>
             <el-form-item label="致贫原因" prop="causePoverty">
               <el-input v-model="form.causePoverty" />
@@ -93,7 +92,6 @@
               <el-input v-model="form.familySituation" placeholder="家庭人口数等情况" />
             </el-form-item>
             <el-form-item label="教育水平" prop="educationLevel">
-              <!--              <el-input v-model="form.educationLevel" />-->
               <el-select v-model="form.educationLevel" placeholder="请选择教育水平">
                 <el-option
                   v-for="item in options"
@@ -156,7 +154,7 @@
 
 <script>
 import crudEmployee from '@/api/system/employee'
-import { isvalidPhone } from '@/utils/validate'
+import { isvalidPhone, validateIdNo } from '@/utils/validate'
 import { getDepts } from '@/api/system/dept'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
@@ -191,15 +189,16 @@ export default {
       }
     }
     // 自定义验证
-    // const validIDNumber = (rule, value, callback) => {
-    //   if (!value) {
-    //     callback(new Error('请输入身份证号码'))
-    //   } else if (!validateIdNo(value)) {
-    //     callback(new Error('请输入正确的身份证号码'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    const validIDNumber = (rule, value, callback) => {
+      console.log('ok')
+      if (!value) {
+        callback(new Error('请输入身份证号码'))
+      } else if (!validateIdNo(rule, value, callback)) {
+        callback(new Error('请输入正确的身份证号码'))
+      } else {
+        callback()
+      }
+    }
     return {
       height: document.documentElement.clientHeight - 180 + 'px;',
       deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
@@ -215,15 +214,20 @@ export default {
       ],
       rules: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          { required: true, message: '请输入姓名', trigger: 'blur' }
+        ],
+        position: [
+          { required: true, message: '请输入职位', trigger: 'blur' }
+        ],
+        number: [
+          { required: true, message: '请输入员工编号', trigger: 'blur' }
         ],
         contact: [
           { required: true, trigger: 'blur', validator: validPhone }
+        ],
+        idNumber: [
+          { required: true, trigger: 'blur', validator: validIDNumber }
         ]
-        // idNumber: [
-        //   { required: true, trigger: 'blur', validator: validateIdNo }
-        // ]
       },
       options: [{
         value: '小学',

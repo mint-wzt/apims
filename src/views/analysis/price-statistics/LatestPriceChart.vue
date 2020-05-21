@@ -1,42 +1,61 @@
 <template>
   <div>
-    <div class="chart-wrapper">
-      <span>产品：</span>
-      <el-input
-        v-model="queryLatestParams.productName"
-        clearable
-        size="small"
-        placeholder="输入产品名称"
-        style="width: 200px;"
-        class="filter-item"
-      />
-      <span>市场：</span>
-      <v-region v-model="selectedProvince" :city="false" :area="false" :town="false" @values="regionChange" />
-      <el-select v-model="queryLatestParams.market" style="width: 178px" placeholder="请选择" @change="getMarketsName">
-        <el-option
-          v-for="(item, index) in markets"
-          :key="'market-' + index"
-          :label="item.marketName"
-          :value="item.id"
+    <el-row>
+      <div class="chart-wrapper">
+        <span>产品：</span>
+        <el-input
+          v-model="queryLatestParams.productName"
+          clearable
+          size="small"
+          placeholder="输入产品名称"
+          style="width: 200px;"
+          class="filter-item"
         />
-      </el-select>
-      <span>时间：</span>
-      <el-date-picker
-        v-model="gapTime"
-        :default-time="['00:00:00','23:59:59']"
-        type="daterange"
-        range-separator=":"
-        size="small"
-        class="date-item"
-        value-format="yyyy-MM-dd HH:mm:ss"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      />
-      <span>
-        <el-button :loading="loading" class="filter-item" size="mini" type="success" icon="el-icon-search" @click="searchProductLatestPrice">搜索</el-button>
-      </span>
-    </div>
-    <div id="priceAnalysisChart" :class="className" :style="{height:height,width:width}" />
+        <span>市场：</span>
+        <v-region v-model="selectedProvince" :city="false" :area="false" :town="false" @values="regionChange" />
+        <el-select v-model="queryLatestParams.market" style="width: 178px" placeholder="请选择" @change="getMarketsName">
+          <el-option
+            v-for="(item, index) in markets"
+            :key="'market-' + index"
+            :label="item.marketName"
+            :value="item.id"
+          />
+        </el-select>
+        <span>时间：</span>
+        <el-date-picker
+          v-model="gapTime"
+          :default-time="['00:00:00','23:59:59']"
+          type="daterange"
+          range-separator=":"
+          size="small"
+          class="date-item"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        />
+        <span>
+          <el-button :loading="loading" class="filter-item" size="mini" type="success" icon="el-icon-search" @click="searchProductLatestPrice">搜索</el-button>
+        </span>
+      </div>
+    </el-row>
+    <el-row>
+      <el-col :xs="24" :sm="24" :lg="18">
+        <div id="priceAnalysisChart" :class="className" :style="{height:height,width:width}" />
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="6" style="background-color: #fffaf6;">
+        <div style="padding-left: 10px;padding-top: 20px;">
+          <span><el-tag effect="dark">查询结果</el-tag></span>
+          <el-divider />
+          <div>
+            <div style="margin-bottom: 15px">最高价：{{ latestPrice.priceMax }}{{ latestPrice.priceUnit }}</div>
+            <div style="margin-bottom: 15px">最低价：{{ latestPrice.priceMin }}{{ latestPrice.priceUnit }}</div>
+            <div style="margin-bottom: 15px">均价：{{ latestPrice.priceAverage }}{{ latestPrice.priceUnit }}</div>
+            <div>市场：{{ queryLatestParams.market }}</div>
+          </div>
+          <el-divider />
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -80,7 +99,7 @@ export default {
         area: '431125',
         town: '43112510' },
       queryLatestParams: { market: null, productName: null, startTime: null, endTime: null },
-      latestPrice: { date: [], price: [], priceUnit: null }
+      latestPrice: { date: [], price: [], priceUnit: null, priceMax: null, priceMin: null, priceAverage: null }
     }
   },
   created() {
@@ -127,13 +146,25 @@ export default {
         return false
       }
       this.loading = true
+      this.queryLatestParams.startTime = this.gapTime[0]
+      this.queryLatestParams.endTime = this.gapTime[1]
       getLatestPrice(this.queryLatestParams).then(res => {
         this.loading = false
         this.latestPrice.date = res.date
         this.latestPrice.price = res.price
         this.latestPrice.priceUnit = res.priceUnit
+        this.latestPrice.priceMax = Math.max.apply(null, this.latestPrice.price)
+        this.latestPrice.priceMin = Math.min.apply(null, this.latestPrice.price)
+        this.latestPrice.priceAverage = this.getAveragePrice(this.latestPrice.price)
         this.initChart()
       })
+    },
+    getAveragePrice(data) {
+      let sum = 0
+      for (let i = 0; i < data.length; i++) {
+        sum += data[i]
+      }
+      return (sum / data.length).toFixed(2)
     },
     searchProductLatestPrice() {
       this.initLatestPriceChart()

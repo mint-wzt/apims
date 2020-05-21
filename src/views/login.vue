@@ -150,7 +150,7 @@ export default {
     background-image:url(https://api.isoyu.com/bing_images.php);
     background-size: cover;
 
-    /*http://d.zdqx.com/bingfj_160902/002.jpg*/
+    /*http://d.zdqx.com/bingfj_160902/002.jpg https://api.isoyu.com/bing_images.php*/
   }
   .title {
     margin: 0 auto 30px auto;

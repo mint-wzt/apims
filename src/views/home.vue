@@ -239,7 +239,7 @@ export default {
       searchProducts: [], // 搜索获取的产品数
       searchStatistics: [], // 每种产品对应的种类数
       productNameSale: null,
-      productSalesStatisticTime: [], // 查询日期
+      productSalesStatisticTime: ['2019-11-01 00:00:00', '2020-05-01 00:00:00'], // 查询日期
       // 销售统计日期 产量 销量 销售额
       productSalesStatistics: { productSalesDate: [], productSalesOutput: [], productSaleNumber: [], productSales: [], outputUnit: null, salesUnit: null },
       productRankTime: '2020-04-01 00:00:00',
