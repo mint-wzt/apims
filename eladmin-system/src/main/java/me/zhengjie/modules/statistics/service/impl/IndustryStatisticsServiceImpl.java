@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.product.domain.SalesRecord;
 import me.zhengjie.modules.statistics.domain.IndustryStatistics;
+import me.zhengjie.modules.statistics.domain.ProductStatistics;
 import me.zhengjie.modules.statistics.repository.IndustryStatisticsRepository;
 import me.zhengjie.modules.statistics.service.IndustryStatisticsService;
 import me.zhengjie.modules.statistics.service.dto.IndustryStatisticsDto;
@@ -15,6 +16,8 @@ import me.zhengjie.modules.system.repository.RegionRepository;
 import me.zhengjie.modules.system.service.RegionService;
 import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.modules.system.service.dto.UserDto;
+import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
 import me.zhengjie.utils.SecurityUtils;
 import org.apache.catalina.security.SecurityUtil;
@@ -22,11 +25,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -134,8 +144,33 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
     }
 
     @Override
+    @Cacheable
     public List<IndustryStatistics> queryAll(IndustryStatisticsQueryCriteria criteria) {
         List<IndustryStatistics> records = statisticsRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
         return records;
+    }
+
+    @Override
+    public void download(List<IndustryStatistics> queryAll, HttpServletResponse response) throws IOException {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (IndustryStatistics statistics : queryAll) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("地区", statistics.getRegionName());
+            map.put("邮编", statistics.getRegionId());
+            map.put("统计项目",statistics.getStatisticsItem());
+            map.put("数量", statistics.getStatisticsTotal());
+            map.put("单位", statistics.getUnit());
+            map.put("统计日期",statistics.getStatisticsTime());
+            list.add(map);
+        }
+        FileUtil.downloadExcel(list, response);
+    }
+
+    @Override
+    @Cacheable
+    public Object get(IndustryStatisticsQueryCriteria criteria, Pageable pageable) {
+        Page<IndustryStatistics> statistics = statisticsRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder),pageable);
+        log.info(JSON.toJSONString(statistics));
+        return PageUtil.toPage(statistics);
     }
 }

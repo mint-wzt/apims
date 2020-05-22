@@ -20,6 +20,9 @@ public class IndustryStatisticsQueryCriteria implements Serializable {
     @Query
     private String regionName;
 
+    @Query
+    private String statisticsItem;
+
     @Query(blurry = "statisticsItem")
     private String blurry;
 

@@ -4,6 +4,7 @@ import me.zhengjie.modules.product.domain.InspectionItem;
 import me.zhengjie.modules.product.service.dto.InspectionItemDto;
 import me.zhengjie.modules.product.service.dto.InspectionItemQueryCriteria;
 import me.zhengjie.modules.statistics.domain.IndustryStatistics;
+import me.zhengjie.modules.statistics.domain.ProductStatistics;
 import me.zhengjie.modules.statistics.service.dto.IndustryStatisticsDto;
 import me.zhengjie.modules.statistics.service.dto.IndustryStatisticsQueryCriteria;
 import org.springframework.data.domain.Pageable;
@@ -43,5 +44,20 @@ public interface IndustryStatisticsService {
      * @return /
      */
     List<IndustryStatistics> queryAll(IndustryStatisticsQueryCriteria criteria);
+
+    /**
+     * 导出数据
+     * @param queryAll
+     * @param response
+     * @throws IOException
+     */
+    void download(List<IndustryStatistics> queryAll, HttpServletResponse response) throws IOException;
+
+    /**
+     * 查询某个地区的数据
+     * @param criteria
+     * @return
+     */
+    Object get(IndustryStatisticsQueryCriteria criteria,Pageable pageable);
 
 }

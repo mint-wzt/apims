@@ -14,7 +14,7 @@ public class ProductStatisticsQueryCriteria implements Serializable {
     private Long id;
 
     @Query(type = Query.Type.IN)
-    private Set<String> statisticsItem;
+    private List<String> statisticsItem;
 
     @Query
     private String regionName;
@@ -22,10 +22,7 @@ public class ProductStatisticsQueryCriteria implements Serializable {
     @Query(blurry = "statisticsItem")
     private String blurry;
 
-    @Query
-    private String regionId;
 
-    @Query
     private String category;
 
     @Query
