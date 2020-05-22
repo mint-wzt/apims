@@ -11,7 +11,7 @@
           style="width: 200px;"
           class="filter-item"
         />
-        <span>市场：</span>
+        <span style="margin-left: 10px">市场：</span>
         <v-region v-model="selectedProvince" :city="false" :area="false" :town="false" @values="regionChange" />
         <el-select v-model="queryLatestParams.market" style="width: 178px" placeholder="请选择" @change="getMarketsName">
           <el-option
@@ -21,7 +21,7 @@
             :value="item.id"
           />
         </el-select>
-        <span>时间：</span>
+        <span style="margin-left: 10px">时间：</span>
         <el-date-picker
           v-model="gapTime"
           :default-time="['00:00:00','23:59:59']"

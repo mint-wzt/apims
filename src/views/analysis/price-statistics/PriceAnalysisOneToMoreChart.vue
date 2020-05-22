@@ -11,7 +11,7 @@
           style="width: 150px;"
           class="filter-item"
         />
-        <span>市场：</span>
+        <span style="margin-left: 10px">市场：</span>
         <v-region v-model="selectedProvince" :city="false" :area="false" :town="false" @values="regionChange1" />
         <el-select v-model="queryLatestParams.startMarket" style="width: 178px" placeholder="请选择" @change="getMarketsName1">
           <el-option
@@ -21,7 +21,7 @@
             :value="item.id"
           />
         </el-select>
-        <span>对比：</span>
+        <span style="margin-left: 10px">对比：</span>
         <v-region v-model="selectedProvince1" :city="false" :area="false" :town="false" @values="regionChange2" />
         <el-select v-model="queryLatestParams.endMarket" style="width: 178px" placeholder="请选择" @change="getMarketsName2">
           <el-option
@@ -31,7 +31,7 @@
             :value="item.id"
           />
         </el-select>
-        <span>时间：</span>
+        <span style="margin-left: 10px">时间：</span>
         <el-date-picker
           v-model="year"
           :default-time="['00:00:00','23:59:59']"

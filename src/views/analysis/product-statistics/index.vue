@@ -5,16 +5,23 @@
         数据统计
       </span>
     </el-divider>
-    <el-tabs v-model="selectedTabPane" @tab-click="handleClick">
-      <el-tab-pane label="销售数据统计" name="first" />
-      <el-tab-pane label="生产数据统计" name="second" />
+    <el-tabs v-model="selectedTabPane" type="card" style="margin-top: 40px" @tab-click="handleClick">
+      <el-tab-pane label="销售数据统计" name="first">
+        <div v-if="selectedTabPane === 'first'">
+          <sales-data />
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="生产数据统计" name="second">
+        <div v-if="selectedTabPane === 'second'">
+          <product-data />
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="产业数据统计" name="third">
+        <div v-if="selectedTabPane === 'third'">
+          <industry-statistics />
+        </div>
+      </el-tab-pane>
     </el-tabs>
-    <div v-if="selectedTabPane === 'first'">
-      <sales-data />
-    </div>
-    <div v-else>
-      <product-data />
-    </div>
   </div>
 </template>
 
@@ -22,12 +29,14 @@
 import { mapGetters } from 'vuex'
 import SalesData from './SalesData'
 import ProductData from './ProductData'
+import IndustryStatistics from './IndustryStatistics'
 /**
    * 记录访问，只有页面刷新或者第一次加载才会记录
    */
 export default {
   name: 'ProductStatistics',
   components: {
+    IndustryStatistics,
     ProductData,
     SalesData
   },

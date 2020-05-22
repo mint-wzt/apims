@@ -15,16 +15,18 @@
             价格分析
           </span>
         </el-divider>
-        <el-tabs v-model="selectedTabPane" @tab-click="handleClick">
-          <el-tab-pane label="单一产品单一市场年度走势" name="first" />
-          <el-tab-pane label="单一产品多个市场年度走势" name="second" />
+        <el-tabs v-model="selectedTabPane" type="card" style="margin-top: 40px" @tab-click="handleClick">
+          <el-tab-pane label="单一产品单一市场年度走势" name="first">
+            <div v-if="selectedTabPane === 'first'">
+              <price-analysis-one-to-one-chart />
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="单一产品多个市场年度走势" name="second">
+            <div v-if="selectedTabPane === 'second'">
+              <price-analysis-one-to-more-chart />
+            </div>
+          </el-tab-pane>
         </el-tabs>
-        <div v-if="selectedTabPane === 'first'">
-          <price-analysis-one-to-one-chart />
-        </div>
-        <div v-else>
-          <price-analysis-one-to-more-chart />
-        </div>
       </el-row>
     </div>
   </div>

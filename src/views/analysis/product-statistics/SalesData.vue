@@ -5,7 +5,7 @@
         <div style="margin-bottom: 25px;margin-top: 15px">
           <span>地区：</span>
           <v-region type="column" :town="true" @values="regionChange" />
-          <span>产品名称：</span>
+          <span style="margin-left: 10px">产品名称：</span>
           <el-input
             v-model="query.productName"
             clearable
@@ -15,7 +15,7 @@
             class="filter-item"
             @keyup.enter.native="crud.toQuery"
           />
-          <span>时间：</span>
+          <span style="margin-left: 10px">时间：</span>
           <el-date-picker
             v-model="query.statisticsTimes"
             :default-time="['00:00:00','23:59:59']"
