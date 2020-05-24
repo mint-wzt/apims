@@ -54,8 +54,6 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
     public void add(SalesStatistics resources) {
         SalesStatistics statistics = repository.findByRegionIdAndProductNameAndStatisticsTime(resources.getRegionId(), resources.getProductName(), resources.getStatisticsTime());
 
-        log.info(JSON.toJSONString(resources));
-        log.info(JSON.toJSONString(statistics));
         if (statistics != null) { // 添加销量、销售额、产量
             if (resources.getOutput() == null) { // 添加销量、销售额
                 statistics.setSaleNumber(DoubleUtils.parseDouble(resources.getSaleNumber()) + DoubleUtils.parseDouble(statistics.getSaleNumber())); // 销量
@@ -95,16 +93,13 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
     @Override
     @Cacheable
     public Object get(SalesStatisticsQueryCriteria criteria) {
-        log.info(JSON.toJSONString(criteria));
         if (criteria.getTimestamps1() != null) {
             List<String> statisticsTime = new ArrayList<>(2);
             statisticsTime.add(DateUtils.getYearAndMonthByTimeStamp(criteria.getTimestamps1()));
             statisticsTime.add(DateUtils.getYearAndMonthByTimeStamp(criteria.getTimestamps2()));
             criteria.setStatisticsTime(statisticsTime);
         }
-        log.info(JSON.toJSONString(criteria));
         List<SalesStatistics> statistics = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), new Sort(Sort.Direction.ASC, "statisticsTime"));
-        log.info(JSON.toJSONString(statistics));
         Map<String, Object> map = new HashMap<>();
         map.put("date", statistics.stream().map(SalesStatistics::getStatisticsTime).collect(Collectors.toList()));
         map.put("output", statistics.stream().map(SalesStatistics::getOutput).collect(Collectors.toList()));
@@ -118,13 +113,10 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
     @Override
     @Cacheable
     public Object getProductSalesRank(SalesStatisticsQueryCriteria criteria) {
-        log.info(JSON.toJSONString(criteria));
         if (criteria.getTimestamps1() != null) {
             criteria.setBlurry(DateUtils.getYearAndMonthByTimeStamp(criteria.getTimestamps1()));
         }
-        log.info(JSON.toJSONString(criteria));
         List<SalesStatistics> statistics = repository.findByRegionNameAndStatisticsTimeOrderBySalesDesc(criteria.getRegionName(),criteria.getBlurry());
-        log.info(JSON.toJSONString(statistics));
         Map<String,Object> map = new HashMap<>();
         map.put("products",statistics.stream().map(SalesStatistics::getProductName).collect(Collectors.toList()));
         map.put("sales",statistics.stream().map(SalesStatistics::getSales).collect(Collectors.toList()));
@@ -141,7 +133,6 @@ public class SalesStatisticsServiceImpl implements SalesStatisticsService {
             criteria.setStatisticsTime(times);
         }
         Page<SalesStatistics> statistics = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder),pageable);
-        log.info(JSON.toJSONString(statistics));
         return PageUtil.toPage(statistics);
     }
 

@@ -1,10 +1,12 @@
 package me.zhengjie.modules.system.rest;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.aop.log.Log;
 import me.zhengjie.modules.system.domain.SysSetUp;
+import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.service.SysSetUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,9 +38,16 @@ public class SysSetUpController {
     @ApiOperation("修改系统信息")
     @PutMapping
     @PreAuthorize("@el.check('system:edit')")
-    public ResponseEntity<Object> update(@Validated(SysSetUp.Update.class) @RequestBody SysSetUp resources){
-        sysSetUpService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Object> update(@RequestBody SysSetUp resources){
+        return new ResponseEntity<>(sysSetUpService.update(resources),HttpStatus.NO_CONTENT);
+    }
+
+    @Log("新增系统信息")
+    @ApiOperation("新增系统信息")
+    @PostMapping
+    @PreAuthorize("@el.check('system:add')")
+    public ResponseEntity<Object> create(@Validated @RequestBody SysSetUp resources){
+        return new ResponseEntity<>(sysSetUpService.create(resources),HttpStatus.CREATED);
     }
 
     @Log("删除系统信息")
@@ -52,10 +61,9 @@ public class SysSetUpController {
 
     @Log("修改系统头像")
     @ApiOperation("修改系统头像")
-    @PostMapping(value = "/logo")
+    @PostMapping(value = "/updateLogo")
     @PreAuthorize("@el.check('system:edit')")
     public ResponseEntity<Object> updateLogo(@RequestParam MultipartFile file){
-        sysSetUpService.updateLogo(file);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(sysSetUpService.updateLogo(file),HttpStatus.OK);
     }
 }

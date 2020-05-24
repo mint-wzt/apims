@@ -114,7 +114,6 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
         List<ProductStatistics> productStatistics = repository.findStatistics(criteria.getRegionName());
         map.put("category",productStatistics.stream().map(ProductStatistics::getStatisticsItem).collect(Collectors.toList()));
         map.put("statisticsData",productStatistics.stream().map(ProductStatistics::getStatisticsTotal).collect(Collectors.toList()));
-        log.info(JSON.toJSONString(map));
         return map;
     }
 
@@ -122,10 +121,8 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
     @Cacheable
 //    @CacheEvict
     public Object getProductByCategory(ProductStatisticsQueryCriteria criteria) {
-        log.info(JSON.toJSONString(criteria));
         Map<String,Object> map = new HashMap<>();
         List<ProductStatistics> statistics = repository.findWithRegionNameAndStatisticItem(criteria.getRegionName(),criteria.getCategory());
-        log.info(JSON.toJSONString(statistics));
         map.put("products",statistics.stream().map(ProductStatistics::getProductName).collect(Collectors.toList()));
         map.put("enterprises",statistics.stream().map(ProductStatistics::getStatisticsTotal).collect(Collectors.toList()));
         return map;
@@ -138,7 +135,6 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
             criteria.setStatisticsItem(Arrays.asList("粮油","水产品","畜产品","蔬菜","果品"));
         }
         Page<ProductStatistics> statistics = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder),pageable);
-        log.info(JSON.toJSONString(statistics));
         return PageUtil.toPage(statistics);
     }
 

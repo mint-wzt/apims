@@ -36,10 +36,16 @@ public class SysSetUp implements Serializable {
     * 系统头像
     */
     private String systemLogo;
+
+    /**
+     * 图片地址
+     */
+    private String logoPath;
     /**
     * 区域
     */
     private String region;
+
     /**
     * 版权
     */

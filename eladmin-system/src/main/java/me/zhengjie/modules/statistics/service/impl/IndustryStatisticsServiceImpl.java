@@ -81,7 +81,6 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
         }
         IndustryStatisticsDto statisticsDto = new IndustryStatisticsDto();
         List<IndustryStatistics> statistics = statisticsRepository.findByStatistics(criteria.getRegionName());
-        log.info(JSON.toJSONString(statistics));
         for (IndustryStatistics s : statistics) {
             switch (s.getStatisticsItem()) {
                 case "种植面积":
@@ -109,7 +108,6 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
                     break;
             }
         }
-        log.info(JSON.toJSONString(statisticsDto));
         return statisticsDto;
     }
 
@@ -128,7 +126,6 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
     // 对行政区域的上级添加项目的数据
     public void addToParent(IndustryStatistics industryStatistics) {
         List<Region> regions = regionService.findParents(industryStatistics.getRegionId());
-        log.info(JSON.toJSONString(regions));
         for (Region region : regions) {
             IndustryStatistics statistics = new IndustryStatistics();
             statistics.setRegionId(region.getId());
@@ -170,7 +167,6 @@ public class IndustryStatisticsServiceImpl implements IndustryStatisticsService 
     @Cacheable
     public Object get(IndustryStatisticsQueryCriteria criteria, Pageable pageable) {
         Page<IndustryStatistics> statistics = statisticsRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder),pageable);
-        log.info(JSON.toJSONString(statistics));
         return PageUtil.toPage(statistics);
     }
 }

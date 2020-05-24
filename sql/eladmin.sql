@@ -1279,3 +1279,53 @@ create table `month_price`(
 `statistics_time` varchar (255) null default null comment '统计时间',
 `create_time` datetime null default null comment '创建时间'
 )engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 采购信息发布表
+drop table if exists `purchase_release`;
+create table `purchase_release`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`product_name` varchar (255) null default null comment '采购品种名称',
+`category_id` bigint(255) null default null comment '品种ID',
+`category_name` varchar (255) null default null comment '品种类型',
+`purchase_quantity` varchar (255) null default null comment '采购数量',
+`quantity_unit` varchar (255) null default null comment '数量单位',
+`specification` varchar (255) null default null comment '规格品质',
+`release_date` datetime null default null comment '发布日期',
+`views` bigint(20) null default null comment '浏览次数',
+`receipt_address` varchar (255) null default null comment '收获地址',
+`supply_address` varchar (255) null default null comment '期望货源',
+`publisher` varchar (255) null default null comment '发布人',
+`contact` varchar (255) null default null comment '联系方式',
+`dept_id` bigint(20) null default null comment '部门ID',
+`dept_name` varchar (255) null default null comment '部门名称',
+`remark` varchar (255) null default null comment '备注',
+`release_status` int(11) null default null comment '状态',
+`update_time` datetime null default null comment '更新时间',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+
+-- 供应信息发布表
+drop table if exists `sales_release`;
+create table `sales_release`(
+`id` bigint(20) not null primary key AUTO_INCREMENT comment 'ID',
+`product_name` varchar (255) null default null comment '采购品种名称',
+`category_id` bigint(255) null default null comment '品种ID',
+`category_name` varchar (255) null default null comment '品种类型',
+`product_image` varchar (255) null default null comment '品种图片',
+`price` varchar (255) null default null comment '价格',
+`price_unit` varchar (255) null default null comment '价格单位',
+`batch_start` varchar (255) null default null comment '起批量',
+`release_date` datetime null default null comment '发布日期',
+`views` bigint(20) null default null comment '浏览次数',
+`receipt_address` varchar (255) null default null comment '收获地址',
+`supply_address` varchar (255) null default null comment '期望货源',
+`publisher` varchar (255) null default null comment '发布人',
+`contact` varchar (255) null default null comment '联系方式',
+`dept_id` bigint(20) null default null comment '部门ID',
+`dept_name` varchar (255) null default null comment '部门名称',
+`remark` varchar (255) null default null comment '备注',
+`release_status` int(11) null default null comment '状态',
+`update_time` datetime null default null comment '更新时间',
+`create_time` datetime null default null comment '创建时间'
+)engine = InnoDB default CHARSET = utf8 ROW_FORMAT = Compact;
+

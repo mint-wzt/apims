@@ -18,7 +18,7 @@ public interface SysSetUpService {
      * 编辑
      * @param resources /
      */
-    void update(SysSetUp resources);
+    SysSetUp update(SysSetUp resources);
 
     /**
      * 删除
@@ -30,7 +30,7 @@ public interface SysSetUpService {
      * 修改logo
      * @param multipartFile 文件
      */
-    void updateLogo(MultipartFile multipartFile);
+    SysSetUp updateLogo(MultipartFile multipartFile);
 
     SysSetUp get();
 }

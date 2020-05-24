@@ -46,7 +46,6 @@ public class PriceServiceImpl implements PriceService {
     @Cacheable
 //    @CacheEvict
     public Object getLatestPrice(PriceQueryCriteria criteria) {
-        log.info(JSON.toJSONString(criteria));
         if (criteria.getStartTime() != null) {
             List<String> statisticsTime = new ArrayList<>(2);
             statisticsTime.add(DateUtils.getYearAndMonthAndDayByTimeStamp(criteria.getStartTime()));

@@ -40,7 +40,6 @@ public class MonthPriceServiceImpl implements MonthPriceService {
     @Override
     @Cacheable
     public Object getMonthPriceOneToOneMarket(MonthPriceQueryCriteria criteria) {
-        log.info(JSON.toJSONString(criteria));
         List<MonthPrice> monthPrices1 = new ArrayList<>();
         List<MonthPrice> monthPrices2 = new ArrayList<>();
         if (criteria.getStartTime() != null) {

@@ -6,9 +6,11 @@ import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.domain.UserAvatar;
 import me.zhengjie.modules.system.repository.SysSetUpRepository;
 import me.zhengjie.modules.system.service.SysSetUpService;
+import me.zhengjie.utils.BeanUtil;
 import me.zhengjie.utils.FileUtil;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -40,17 +43,12 @@ public class SysSetUpServiceImpl implements SysSetUpService {
     }
 
     @Override
-    public void update(SysSetUp resources) {
+    public SysSetUp update(SysSetUp resources) {
         SysSetUp sysSetUp = setUpRepository.findAll().get(0);
-        sysSetUp.setCaseNumber(resources.getCaseNumber());
-        sysSetUp.setCopyright(resources.getCopyright());
-        sysSetUp.setSystemName(resources.getSystemName());
-        sysSetUp.setEnterprise(resources.getEnterprise());
-        sysSetUp.setDescription(resources.getDescription());
-        sysSetUp.setOwner(resources.getOwner());
-        sysSetUp.setRegion(resources.getRegion());
-        sysSetUp.setSysStatus(resources.getSysStatus());
-        setUpRepository.save(sysSetUp);
+
+        String[] nullPropertyNames = BeanUtil.getNullPropertyNames(resources);
+        BeanUtils.copyProperties(resources,sysSetUp,nullPropertyNames);
+        return setUpRepository.save(sysSetUp);
     }
 
     @Override
@@ -61,12 +59,19 @@ public class SysSetUpServiceImpl implements SysSetUpService {
     }
 
     @Override
-    public void updateLogo(MultipartFile multipartFile) {
-        SysSetUp sysSetUp = setUpRepository.findAll().get(0);
+    public SysSetUp updateLogo(MultipartFile multipartFile) {
+        List<SysSetUp> sysSetUps = setUpRepository.findAll();
+        SysSetUp sysSetUp;
+        if (sysSetUps == null || sysSetUps.size() == 0){
+            sysSetUp = new SysSetUp();
+        }else {
+            sysSetUp = sysSetUps.get(0);
+        }
         File file = FileUtil.upload(multipartFile, logo);
         assert file != null;
         sysSetUp.setSystemLogo(file.getName());
-        setUpRepository.save(sysSetUp);
+        sysSetUp.setLogoPath(file.getPath());
+        return setUpRepository.save(sysSetUp);
     }
 
     @Override

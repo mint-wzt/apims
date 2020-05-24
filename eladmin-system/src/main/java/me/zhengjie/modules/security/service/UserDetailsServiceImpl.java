@@ -46,7 +46,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails createJwtUser(UserDto user) {
-        JwtUser jwtUser =  new JwtUser(
+        return new JwtUser(
                 user.getId(),
                 user.getUsername(),
                 user.getNickName(),
@@ -66,7 +66,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getCreateTime(),
                 user.getLastPasswordResetTime()
         );
-        log.info(JSON.toJSONString(jwtUser));
-        return jwtUser;
     }
 }
