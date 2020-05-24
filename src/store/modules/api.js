@@ -11,6 +11,7 @@ const api = {
     imagesUploadApi: baseUrl + '/api/pictures',
     // 修改头像
     updateAvatarApi: baseUrl + '/api/users/updateAvatar',
+    updateSysLogoApi: baseUrl + '/api/system/updateLogo',
     // 上传文件到七牛云
     qiNiuUploadApi: baseUrl + '/api/qiNiuContent',
     // Sql 监控

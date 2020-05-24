@@ -46,6 +46,7 @@ import { encrypt } from '@/utils/rsaEncrypt'
 import Config from '@/settings'
 import { getCodeImg } from '@/api/login'
 import Cookies from 'js-cookie'
+
 export default {
   name: 'Login',
   data() {
@@ -77,6 +78,7 @@ export default {
     }
   },
   created() {
+    // this.getSysInfo()
     this.getCode()
     this.getCookie()
   },
@@ -101,6 +103,9 @@ export default {
         code: ''
       }
     },
+    // getSysInfo() {
+    //   store.dispatch('GetSysInfo').then(() => {}).catch(() => {})
+    // },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         const user = {

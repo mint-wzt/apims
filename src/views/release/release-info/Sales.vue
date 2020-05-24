@@ -5,15 +5,28 @@
         <div style="margin-bottom: 25px;margin-top: 15px">
           <span>地区：</span>
           <v-region type="column" :town="true" @values="regionChange" />
-          <span style="margin-left: 10px">统计项目：</span>
-          <el-select v-model="query.statisticsItem" placeholder="请选择">
-            <el-option
-              v-for="item in productTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <span style="margin-left: 10px">产品名称：</span>
+          <el-input
+            v-model="query.productName"
+            clearable
+            size="small"
+            placeholder="输入产品名称"
+            style="width: 200px;"
+            class="filter-item"
+            @keyup.enter.native="crud.toQuery"
+          />
+          <span style="margin-left: 10px">时间：</span>
+          <el-date-picker
+            v-model="query.statisticsTimes"
+            :default-time="['00:00:00','23:59:59']"
+            type="monthrange"
+            range-separator=":"
+            size="small"
+            class="date-item"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          />
           <rrOperation :crud="crud" />
           <el-button
             v-if="crud.optShow.download"
@@ -34,18 +47,23 @@
         <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
           <el-table-column type="selection" width="55" />
           <el-table-column v-if="columns.visible('regionName')" :show-overflow-tooltip="true" prop="regionName" label="地区" />
-          <el-table-column v-if="columns.visible('regionId')" :show-overflow-tooltip="true" prop="regionId" label="邮编" />
-          <el-table-column v-if="columns.visible('statisticsItem')" :show-overflow-tooltip="true" prop="statisticsItem" label="统计项目" />
-          <el-table-column v-if="columns.visible('statisticsTotal')" :show-overflow-tooltip="true" prop="statisticsTotal" label="数量(单位)">
+          <el-table-column v-if="columns.visible('productName')" :show-overflow-tooltip="true" prop="productName" label="产品名称" />
+          <el-table-column v-if="columns.visible('outputs')" :show-overflow-tooltip="true" prop="outputs" label="产量">
             <template slot-scope="scope">
-              <span>{{ scope.row.statisticsTotal }} {{ '(' + scope.row.unit + ')' }}</span>
+              <div>{{ scope.row.output }} {{ scope.row.outputUnit }}</div>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns.visible('statisticsTime')" :show-overflow-tooltip="true" prop="statisticsTime" label="统计日期">
+          <el-table-column v-if="columns.visible('saleNumbers')" :show-overflow-tooltip="true" prop="saleNumbers" label="销量">
             <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.statisticsTime) }}</span>
+              <div>{{ scope.row.saleNumber }} {{ scope.row.saleUnit }}</div>
             </template>
           </el-table-column>
+          <el-table-column v-if="columns.visible('sale')" :show-overflow-tooltip="true" prop="sale" label="销售额">
+            <template slot-scope="scope">
+              <div>{{ scope.row.sales }} {{ scope.row.salesUnit }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="columns.visible('statisticsTime')" :show-overflow-tooltip="true" prop="statisticsTime" label="统计日期" />
         </el-table>
         <pagination />
       </el-col>
@@ -58,10 +76,10 @@ import rrOperation from '@crud/RR.operation'
 import { getSalesData } from '@/api/statistics/sales-statistics'
 import pagination from '@crud/Pagination'
 
-const defaultCrud = CRUD({ url: 'api/industry-statistics', optShow: { add: false, edit: false, del: false, download: true }, sort: ['regionName,asc', 'statisticsItem,desc'] })
+const defaultCrud = CRUD({ url: 'api/sales-statistics', optShow: { add: false, edit: false, del: false, download: true }, sort: ['statisticsTime,desc', 'regionName,asc'] })
 
 export default {
-  name: 'IndustryStatistics',
+  name: 'Sales',
   mixins: [presenter(defaultCrud), header(), crud()],
   components: {
     rrOperation,
@@ -79,39 +97,7 @@ export default {
       tableData: [],
       permission: {
         download: ['admin']
-      },
-      productType: null,
-      productTypes: [{ // 选择框产品分类
-        value: '行政单位',
-        label: '行政单位'
-      }, {
-        value: '组织机构',
-        label: '组织机构'
-      }, {
-        value: '员工',
-        label: '员工数量'
-      }, {
-        value: '种植面积',
-        label: '种植面积'
-      }, {
-        value: '养殖数量',
-        label: '养殖数量'
-      }, {
-        value: '种植业',
-        label: '种植业产品'
-      }, {
-        value: '畜牧业',
-        label: '畜牧业产品'
-      }, {
-        value: '渔业',
-        label: '渔业产品'
-      }, {
-        value: '帮扶项目',
-        label: '补助项目'
-      }, {
-        value: '帮扶资金',
-        label: '补助资金'
-      }]
+      }
     }
   },
   created() {

@@ -1,5 +1,6 @@
 import variables from '@/assets/styles/element-variables.scss'
 import defaultSettings from '@/settings'
+import { getInfo } from '@/api/system/setup'
 
 const { title, tagsView, fixedHeader, sidebarLogo, uniqueOpened, showFooter, footerTxt, caseNumber } = defaultSettings
 
@@ -13,7 +14,10 @@ const state = {
   uniqueOpened: uniqueOpened,
   showFooter: showFooter,
   footerTxt: footerTxt,
-  caseNumber: caseNumber
+  caseNumber: caseNumber,
+  systemLogo: '@/assets/images/logo.png',
+  enterprise: null,
+  description: null
 }
 
 const mutations = {
@@ -27,6 +31,20 @@ const mutations = {
 const actions = {
   changeSetting({ commit }, data) {
     commit('CHANGE_SETTING', data)
+  },
+  // 获取系统信息
+  GetSysInfo({ commit }) {
+    return new Promise((resolve, reject) => {
+      getInfo().then(res => {
+        this.setSysInfo(res, commit)
+        resolve(res)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  setSysInfo(res, commit) {
+    console.log(res)
   }
 }
 
