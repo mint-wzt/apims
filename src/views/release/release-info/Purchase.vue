@@ -14,7 +14,7 @@
           </el-select>
           <span style="margin-left: 10px">品种名称：</span>
           <el-input
-            v-model="queryParams.productName"
+            v-model="query.blurry"
             clearable
             size="small"
             placeholder="输入品种名称"
@@ -42,7 +42,7 @@
     </el-row>
     <el-row>
       <el-col :xs="24" :sm="24" :lg="24">
-        <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler" @expand-change="addViews">
+        <el-table ref="table" v-loading="crud.loading" :data="crud.data" default-expand-all style="width: 100%;" @selection-change="crud.selectionChangeHandler" @expand-change="addViews">
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -111,10 +111,8 @@ const defaultCrud = CRUD({ url: 'api/purchase-release', sort: ['releaseDate,desc
 
 export default {
   name: 'Purchase',
+  components: { pagination },
   mixins: [presenter(defaultCrud), header(), crud()],
-  components: {
-    pagination
-  },
   data() {
     return {
       queryParams: {
@@ -151,7 +149,6 @@ export default {
   methods: {
     submit() {
       this.crud.query.categoryName = this.queryParams.categoryName
-      this.crud.query.productName = this.queryParams.productName
       this.crud.query.releaseDate = this.queryParams.releaseDates
       this.crud.toQuery()
     },

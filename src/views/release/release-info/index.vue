@@ -6,14 +6,14 @@
       </span>
     </el-divider>
     <el-tabs v-model="selectedTabPane" type="card" style="margin-top: 40px" @tab-click="handleClick">
-      <el-tab-pane label="最新采购" name="first">
+      <el-tab-pane label="最新供应" name="first">
         <div v-if="selectedTabPane === 'first'">
-          <purchase />
+          <sales />
         </div>
       </el-tab-pane>
-      <el-tab-pane label="最新供应" name="second">
+      <el-tab-pane label="最新采购" name="second">
         <div v-if="selectedTabPane === 'second'">
-          <sales />
+          <purchase />
         </div>
       </el-tab-pane>
     </el-tabs>

@@ -68,11 +68,11 @@
             <el-table-column v-if="columns.visible('permission')" prop="permission" label="角色权限" />
             <el-table-column v-if="columns.visible('level')" prop="level" label="角色级别" />
             <el-table-column v-if="columns.visible('remark')" :show-overflow-tooltip="true" prop="remark" label="描述" />
-            <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" width="135px" prop="createTime" label="创建日期">
-              <template slot-scope="scope">
-                <span>{{ parseTime(scope.row.createTime) }}</span>
-              </template>
-            </el-table-column>
+            <!--            <el-table-column v-if="columns.visible('createTime')" :show-overflow-tooltip="true" width="135px" prop="createTime" label="创建日期">-->
+            <!--              <template slot-scope="scope">-->
+            <!--                <span>{{ parseTime(scope.row.createTime) }}</span>-->
+            <!--              </template>-->
+            <!--            </el-table-column>-->
             <el-table-column v-permission="['admin','roles:edit','roles:del']" label="操作" width="130px" align="center" fixed="right">
               <template slot-scope="scope">
                 <udOperation

@@ -3,23 +3,30 @@
     <el-row>
       <div class="chart-wrapper">
         <div style="margin-bottom: 25px;margin-top: 15px">
-          <span>地区：</span>
-          <v-region type="column" :town="true" @values="regionChange" />
-          <span style="margin-left: 10px">产品名称：</span>
+          <span>品种类型：</span>
+          <el-select v-model="queryParams.categoryName" placeholder="请选择">
+            <el-option
+              v-for="item in categories"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <span style="margin-left: 10px">品种名称：</span>
           <el-input
-            v-model="query.productName"
+            v-model="query.blurry"
             clearable
             size="small"
-            placeholder="输入产品名称"
+            placeholder="输入品种名称"
             style="width: 200px;"
             class="filter-item"
             @keyup.enter.native="crud.toQuery"
           />
-          <span style="margin-left: 10px">时间：</span>
+          <span style="margin-left: 10px">发布时间：</span>
           <el-date-picker
-            v-model="query.statisticsTimes"
+            v-model="queryParams.releaseDates"
             :default-time="['00:00:00','23:59:59']"
-            type="monthrange"
+            type="daterange"
             range-separator=":"
             size="small"
             class="date-item"
@@ -27,84 +34,136 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
           />
-          <rrOperation :crud="crud" />
-          <el-button
-            v-if="crud.optShow.download"
-            style="margin-left: 10px"
-            :loading="crud.downloadLoading"
-            :disabled="!crud.data.length"
-            class="filter-item"
-            size="mini"
-            type="warning"
-            icon="el-icon-download"
-            @click="crud.doExport"
-          >导出</el-button>
+          <span>
+            <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="submit">搜索</el-button>
+          </span>
         </div>
       </div>
     </el-row>
     <el-row>
-      <el-col :xs="24" :sm="24" :lg="24">
-        <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-          <el-table-column type="selection" width="55" />
-          <el-table-column v-if="columns.visible('regionName')" :show-overflow-tooltip="true" prop="regionName" label="地区" />
-          <el-table-column v-if="columns.visible('productName')" :show-overflow-tooltip="true" prop="productName" label="产品名称" />
-          <el-table-column v-if="columns.visible('outputs')" :show-overflow-tooltip="true" prop="outputs" label="产量">
-            <template slot-scope="scope">
-              <div>{{ scope.row.output }} {{ scope.row.outputUnit }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="columns.visible('saleNumbers')" :show-overflow-tooltip="true" prop="saleNumbers" label="销量">
-            <template slot-scope="scope">
-              <div>{{ scope.row.saleNumber }} {{ scope.row.saleUnit }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="columns.visible('sale')" :show-overflow-tooltip="true" prop="sale" label="销售额">
-            <template slot-scope="scope">
-              <div>{{ scope.row.sales }} {{ scope.row.salesUnit }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column v-if="columns.visible('statisticsTime')" :show-overflow-tooltip="true" prop="statisticsTime" label="统计日期" />
-        </el-table>
-        <pagination />
+      <el-col v-for="(item, index) in crud.data" :key="index" v-loading="crud.loading" :xs="24" :sm="24" :lg="6" :span="6" style="padding: 20px" @selection-change="crud.selectionChangeHandler">
+        <el-card :body-style="{ padding: '0px' }">
+          <img style="height: 200px; border-radius:10px;" :src="getImageURL(item.productImage)" class="image">
+          <div style="padding: 14px;">
+            <span style="font-size: 20px;color: red">{{ item.price }}</span>
+            <div class="bottom clearfix">
+              <span class="product">{{ item.productName }} / {{ item.categoryName }}</span>
+              <el-button type="text" class="button" @click="getProductInfo(item)">查看详情</el-button>
+            </div>
+            <div style="margin-top: 10px;">
+              <span style="margin-right: 10px" class="time">{{ item.deliveryAddress }}</span>
+            </div>
+          </div>
+        </el-card>
       </el-col>
+    </el-row>
+    <el-dialog :visible.sync="dialog" title="供应详情">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span style="font-size: 17px">品种名称：</span>
+          <span style="color: #00a0e9;font-size: 17px">{{ dialogItem.productName }}</span>
+        </div>
+        <el-row>
+          <el-col :xs="24" :sm="24" :lg="16">
+            <div class="text item">
+              <span class="tap">品种类型：</span>{{ dialogItem.categoryName }}
+            </div>
+            <div class="text item">
+              <span class="tap">起批量：</span>{{ dialogItem.batchStart }}
+            </div>
+            <div class="text item">
+              <span class="tap">价格：</span>{{ dialogItem.price }}
+            </div>
+            <div class="text item">
+              <span class="tap">发货地址：</span>{{ dialogItem.deliveryAddress }}
+            </div>
+            <div class="text item">
+              <span class="tap">联系人：</span>{{ dialogItem.publisher }}
+            </div>
+            <div class="text item">
+              <span class="tap">联系方式：</span>{{ dialogItem.contact }}
+            </div>
+            <div class="text item">
+              <span class="tap">备注：</span>{{ dialogItem.remark }}
+            </div>
+            <div class="text item">
+              <span class="tap">浏览量：</span>{{ dialogItem.views }}
+            </div>
+          </el-col>
+          <el-col :xs="24" :sm="24" :lg="8">
+            <img style="height: 200px;width: 200px; margin-right: 20px" :src="getImageURL(dialogItem.productImage)">
+          </el-col>
+        </el-row>
+      </el-card>
+    </el-dialog>
+    <pagination />
+    <el-row v-show="false">
+      <el-table ref="table" />
     </el-row>
   </div>
 </template>
 <script>
 import CRUD, { presenter, header, crud } from '@crud/crud'
-import rrOperation from '@crud/RR.operation'
 import { getSalesData } from '@/api/statistics/sales-statistics'
 import pagination from '@crud/Pagination'
+import { addViews } from '@/api/release/sales-release'
+import Avatar from '@/assets/images/product.jpg'
+import { mapGetters } from 'vuex'
 
-const defaultCrud = CRUD({ url: 'api/sales-statistics', optShow: { add: false, edit: false, del: false, download: true }, sort: ['statisticsTime,desc', 'regionName,asc'] })
+const defaultCrud = CRUD({ url: 'api/sales-release', sort: ['releaseDate,desc'], query: { releaseStatus: 1 }})
 
 export default {
   name: 'Sales',
+  components: { pagination },
   mixins: [presenter(defaultCrud), header(), crud()],
-  components: {
-    rrOperation,
-    pagination
-  },
   data() {
     return {
-      queryParams: {
-        regionId: null,
-        regionName: null,
+      dialogItem: {
         productName: null,
-        statisticsTimes: null
+        categoryName: null,
+        batchStart: null,
+        price: null,
+        deliveryAddress: null,
+        publisher: null,
+        views: 0,
+        contact: null,
+        remark: '-',
+        productImage: null
       },
-      loading: false,
-      tableData: [],
-      permission: {
-        download: ['admin']
-      }
+      dialog: false,
+      productInfo: null,
+      currentDate: new Date(),
+      queryParams: {
+        categoryName: null,
+        productName: null,
+        releaseDates: []
+      },
+      categories: [{ // 选择框产品分类
+        value: '粮油',
+        label: '粮油'
+      }, {
+        value: '果品',
+        label: '果品'
+      }, {
+        value: '蔬菜',
+        label: '蔬菜'
+      }, {
+        value: '水产品',
+        label: '水产品'
+      }, {
+        value: '畜产品',
+        label: '畜产品'
+      }]
     }
   },
+  computed: {
+    ...mapGetters([
+      'user',
+      'uploadProductImageApi',
+      'baseApi'
+    ])
+  },
   created() {
-    // this.$nextTick(() => {
-    //   console.log('1')
-    //   this.crud.toQuery()
-    // })
   },
   mounted: function() {
     const that = this
@@ -113,32 +172,80 @@ export default {
     }
   },
   methods: {
+    getProductInfo(item) {
+      this.dialog = true
+      this.dialogItem.productName = item.productName
+      this.dialogItem.categoryName = item.categoryName
+      this.dialogItem.batchStart = item.batchStart
+      this.dialogItem.price = item.price
+      this.dialogItem.deliveryAddress = item.deliveryAddress
+      this.dialogItem.publisher = item.publisher
+      this.dialogItem.views = item.views
+      this.dialogItem.contact = item.contact
+      this.dialogItem.remark = item.remark
+      this.dialogItem.productImage = item.productImage
+      addViews({ id: item.id }).then(res => {})
+    },
+    getImageURL(imageName) {
+      return imageName ? this.baseApi + '/avatar/' + imageName : Avatar
+    },
+    submit() {
+      this.crud.query.categoryName = this.queryParams.categoryName
+      this.crud.query.releaseDate = this.queryParams.releaseDates
+      this.crud.toQuery()
+    },
     getSalesInfo() {
       getSalesData(this.queryParams).then(res => {
         this.tableData = res
       })
-    },
-    regionChange(data) {
-      if (data.town !== null) {
-        // this.crud.query.regionId = data.town.key
-        this.crud.query.regionName = data.town.value
-      } else if (data.area !== null) {
-        // this.crud.query.regionId = data.area.key
-        this.crud.query.regionName = data.area.value
-      } else if (data.city !== null) {
-        // this.crud.query.regionId = data.city.key
-        this.crud.query.regionName = data.city.value
-      } else if (data.province !== null) {
-        // this.crud.query.regionId = data.province.key
-        this.crud.query.regionName = data.province.value
-      } else {
-        this.crud.query.regionName = null
-      }
     }
   }
 }
 </script>
 
 <style scoped>
+  .tap {
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .text {
+    font-size: 14px;
+  }
 
+  .item {
+    margin-bottom: 18px;
+  }
+  .product{
+    font-size: 14px;
+  }
+  .time {
+    font-size: 13px;
+    color: #999;
+  }
+
+  .bottom {
+    margin-top: 13px;
+    line-height: 12px;
+  }
+
+  .button {
+    font-size: 13px;
+    padding: 0;
+    float: right;
+  }
+
+  .image {
+    width: 100%;
+    display: block;
+  }
+
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+
+  .clearfix:after {
+    clear: both
+  }
 </style>
