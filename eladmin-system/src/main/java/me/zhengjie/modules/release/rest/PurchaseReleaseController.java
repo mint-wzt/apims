@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
-@Api(tags = "农产品：采购供应消息发布")
+@Api(tags = "农产品：采购消息发布")
 @RestController
 @RequestMapping("/api/purchase-release")
 public class PurchaseReleaseController {
@@ -50,6 +50,14 @@ public class PurchaseReleaseController {
     public void download(HttpServletResponse response, PurchaseReleaseQueryCriteria criteria) throws IOException {
         purchaseReleaseService.download(purchaseReleaseService.queryAll(criteria), response);
     }
+
+    @Log("获取采购消息发布数据")
+    @ApiOperation("获取采购消息发布数据")
+    @GetMapping(value = "/release-new")
+    public ResponseEntity<Object> getNewRelease(PurchaseReleaseQueryCriteria criteria, Pageable pageable){
+        return new ResponseEntity<>(purchaseReleaseService.queryAll(criteria,pageable), HttpStatus.OK);
+    }
+
 
     @Log("查询采购消息发布数据")
     @ApiOperation("查询采购消息发布数据")

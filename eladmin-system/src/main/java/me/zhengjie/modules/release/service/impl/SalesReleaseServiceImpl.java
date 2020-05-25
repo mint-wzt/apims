@@ -2,12 +2,14 @@ package me.zhengjie.modules.release.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.release.domain.PurchaseRelease;
+import me.zhengjie.modules.release.domain.SalesRelease;
 import me.zhengjie.modules.release.repository.PurchaseReleaseRepository;
-import me.zhengjie.modules.release.service.PurchaseReleaseService;
-import me.zhengjie.modules.release.service.dto.PurchaseReleaseQueryCriteria;
-import me.zhengjie.modules.system.domain.SysSetUp;
+import me.zhengjie.modules.release.repository.SalesReleaseRepository;
+import me.zhengjie.modules.release.service.SalesReleaseService;
+import me.zhengjie.modules.release.service.dto.SalesReleaseQueryCriteria;
 import me.zhengjie.utils.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,27 +27,30 @@ import java.util.*;
 
 @Service
 @Slf4j
-@CacheConfig(cacheNames = "purchase-release")
+@CacheConfig(cacheNames = "sales-release")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
-public class PurchaseReleaseServiceImpl implements PurchaseReleaseService {
+public class SalesReleaseServiceImpl implements SalesReleaseService {
 
-    private final PurchaseReleaseRepository releaseRepository;
+    private final SalesReleaseRepository releaseRepository;
 
-    public PurchaseReleaseServiceImpl(PurchaseReleaseRepository releaseRepository) {
+    @Value("${file.product}")
+    private String productImageUrl;
+
+    public SalesReleaseServiceImpl(SalesReleaseRepository releaseRepository) {
         this.releaseRepository = releaseRepository;
     }
 
     @Override
     @CacheEvict
-    public PurchaseRelease create(PurchaseRelease resources) {
+    public SalesRelease create(SalesRelease resources) {
         return releaseRepository.save(resources);
     }
 
     @Override
     @CacheEvict
-    public void update(PurchaseRelease resources) {
-        PurchaseRelease release = releaseRepository.findById(resources.getId()).orElseGet(PurchaseRelease::new);
-        ValidationUtil.isNull(release.getId(),"PurchaseRelease","id",resources.getId());
+    public void update(SalesRelease resources) {
+        SalesRelease release = releaseRepository.findById(resources.getId()).orElseGet(SalesRelease::new);
+        ValidationUtil.isNull(release.getId(),"SalesRelease","id",resources.getId());
 
         String[] nullPropertyNames = BeanUtil.getNullPropertyNames(resources);
         BeanUtils.copyProperties(resources,release,nullPropertyNames);
@@ -54,6 +59,7 @@ public class PurchaseReleaseServiceImpl implements PurchaseReleaseService {
 
     @Override
     @CacheEvict
+    @Transactional
     public void delete(Set<Long> ids) {
         for (Long id : ids){
             releaseRepository.deleteById(id);
@@ -62,33 +68,32 @@ public class PurchaseReleaseServiceImpl implements PurchaseReleaseService {
 
     @Override
     @Cacheable
-    public Object queryAll(PurchaseReleaseQueryCriteria criteria, Pageable pageable) {
-        Page<PurchaseRelease> page = releaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+    public Object queryAll(SalesReleaseQueryCriteria criteria, Pageable pageable) {
+        Page<SalesRelease> page = releaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
         return PageUtil.toPage(page);
     }
 
     @Override
     @Cacheable
-    public List<PurchaseRelease> queryAll(PurchaseReleaseQueryCriteria criteria) {
-        List<PurchaseRelease> releases = releaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
+    public List<SalesRelease> queryAll(SalesReleaseQueryCriteria criteria) {
+        List<SalesRelease> releases = releaseRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder));
         return releases;
     }
 
     @Override
-    public void download(List<PurchaseRelease> queryAll, HttpServletResponse response) throws IOException {
+    public void download(List<SalesRelease> queryAll, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (PurchaseRelease release : queryAll) {
+        for (SalesRelease release : queryAll) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("采购品种名称", release.getProductName());
             map.put("品种类型ID", release.getCategoryId());
             map.put("品种类型名称", release.getCategoryName());
-            map.put("采购数量", release.getPurchaseQuantity());
-            map.put("数量单位", release.getQuantityUnit());
-            map.put("规格品质", release.getSpecification());
+            map.put("价格", release.getPrice());
+            map.put("价格单位", release.getPriceUnit());
+            map.put("起批量", release.getBatchStart());
             map.put("发布日期", release.getReleaseDate());
             map.put("浏览次数", release.getViews());
-            map.put("收获地址", release.getReceiptAddress());
-            map.put("期望货源", release.getSupplyAddress());
+            map.put("发货地址", release.getDeliveryAddress());
             map.put("发布人", release.getPublisher());
             map.put("联系方式", release.getContact());
             map.put("部门名称", release.getDeptName());
@@ -102,8 +107,17 @@ public class PurchaseReleaseServiceImpl implements PurchaseReleaseService {
 
     @Override
     public void addViews(Long id) {
-        PurchaseRelease purchaseRelease = releaseRepository.findById(id).get();
+        SalesRelease purchaseRelease = releaseRepository.findById(id).get();
         purchaseRelease.setViews(purchaseRelease.getViews()+1);
         releaseRepository.save(purchaseRelease);
+    }
+
+    @Override
+    public Object updateProductImage(MultipartFile multipartFile) {
+        File file = FileUtil.upload(multipartFile, productImageUrl);
+        assert file != null;
+        Map<String,String> map = new HashMap<>();
+        map.put("imageName",file.getName());
+        return map;
     }
 }

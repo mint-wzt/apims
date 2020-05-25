@@ -26,6 +26,9 @@ public class ConfigurerAdapter implements WebMvcConfigurer {
     @Value("${file.avatar}")
     private String avatar;
 
+    @Value("${file.product}")
+    private String productImage;
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -42,7 +45,9 @@ public class ConfigurerAdapter implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String avatarUtl = "file:" + avatar.replace("\\","/");
         String pathUtl = "file:" + path.replace("\\","/");
+        String productImageUtl = "file:" + productImage.replace("\\","/");
         registry.addResourceHandler("/avatar/**").addResourceLocations(avatarUtl).setCachePeriod(0);
+        registry.addResourceHandler("/product/**").addResourceLocations(productImageUtl).setCachePeriod(0);
         registry.addResourceHandler("/file/**").addResourceLocations(pathUtl).setCachePeriod(0);
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/").setCachePeriod(0);
     }

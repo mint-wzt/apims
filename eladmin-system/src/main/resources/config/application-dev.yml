@@ -67,6 +67,7 @@ swagger:
 file:
   path: C:\eladmin\file\
   avatar: C:\eladmin\avatar\
+  product: C:\eladmin\avatar\
   # 文件大小 /M
   maxSize: 100
   avatarMaxSize: 5
